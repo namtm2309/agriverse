@@ -1,0 +1,22 @@
+node_modules/
+dist/
+build/
+**/*.log
+
+# Backend SQLite DB (Prisma)
+agriverse-backend/prisma/dev.db
+agriverse-backend/prisma/*.db-journal
+
+# Env / secrets
+.env
+config.env
+
+# IDE / editor
+.vscode/
+.idea/
+.DS_Store
+
+# Misc
+Thumbs.db
+
+

@@ -1,0 +1,246 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  email     String?  @unique
+  password  String
+  role      String   @default("USER")
+  status    String   @default("ACTIVE")
+  walletAddress String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  farms     Farm[]        @relation("FarmOwner")
+  orders    Order[]       @relation("UserOrders")
+  nftAssets NftAsset[]    @relation("UserNftAssets")
+  adminLogs AdminLog[]    @relation("AdminLogs")
+}
+
+model Area {
+  id        Int      @id @default(autoincrement())
+  name      String
+  parentId  Int?
+  level     String?  // Province / District / Commune
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  parent   Area?   @relation("AreaHierarchy", fields: [parentId], references: [id])
+  children Area[]  @relation("AreaHierarchy")
+
+  farms    Farm[]
+}
+
+model Farm {
+  id        Int      @id @default(autoincrement())
+  name      String
+  areaId    Int
+  ownerId   Int?
+  address   String?
+  certification String? // VietGAP, GlobalGAP
+  description String?
+  status    String? // ACTIVE, INACTIVE
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  area      Area     @relation(fields: [areaId], references: [id])
+  owner     User?    @relation("FarmOwner", fields: [ownerId], references: [id])
+  plots     Plot[]
+  nftAssets NftAsset[]
+}
+
+model Plot {
+  id        Int      @id @default(autoincrement())
+  farmId    Int
+  code      String
+  areaSize  Float?
+  soilType  String?
+  waterSource String?
+  gpsPolygon String? // SQLite không hỗ trợ Json scalar, lưu JSON dạng string
+  status    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  farm      Farm   @relation(fields: [farmId], references: [id])
+  seasons   Season[]
+  devices   Device[]
+  nftAssets NftAsset[]
+}
+
+model Crop {
+  id        Int      @id @default(autoincrement())
+  name      String
+  variety   String?
+  growthDays Int?
+  tempMin   Float?
+  tempMax   Float?
+  humidityMin Float?
+  humidityMax Float?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  seasons   Season[]
+}
+
+model Season {
+  id        Int      @id @default(autoincrement())
+  cropId    Int
+  plotId    Int
+  startDate DateTime
+  expectedHarvestDate DateTime?
+  expectedYield Float?
+  status    String? // PLANNED, GROWING, HARVESTED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  crop      Crop  @relation(fields: [cropId], references: [id])
+  plot      Plot  @relation(fields: [plotId], references: [id])
+  tasks     Task[]
+  logs      FarmLog[]
+  harvests  Harvest[]
+  nftAssets NftAsset[]
+}
+
+model Task {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  seasonId    Int
+  dueDate     DateTime?
+  taskType    String? // WATER, FERTILIZE, SPRAY
+  status      String? // PLANNED, DONE, CANCELLED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  season      Season  @relation(fields: [seasonId], references: [id])
+  logs        FarmLog[]
+}
+
+model FarmLog {
+  id        Int      @id @default(autoincrement())
+  seasonId  Int
+  taskId    Int?
+  note      String
+  imageUrl  String?
+  createdAt DateTime @default(now())
+
+  season    Season  @relation(fields: [seasonId], references: [id])
+  task      Task?   @relation(fields: [taskId], references: [id])
+}
+
+model Device {
+  id        Int      @id @default(autoincrement())
+  name      String
+  plotId    Int?
+  deviceType String?
+  status    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  plot      Plot?   @relation(fields: [plotId], references: [id])
+  sensorData SensorData[]
+}
+
+model SensorData {
+  id           Int      @id @default(autoincrement())
+  deviceId     Int
+  temperature  Float?
+  humidity     Float?
+  soilMoisture Float?
+  recordedAt   DateTime @default(now())
+
+  device       Device  @relation(fields: [deviceId], references: [id])
+}
+
+model Harvest {
+  id        Int      @id @default(autoincrement())
+  seasonId  Int
+  harvestDate DateTime?
+  actualYield Float?
+  qualityNote String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  season    Season   @relation(fields: [seasonId], references: [id])
+  productBatches  ProductBatch[]
+}
+
+model ProductBatch {
+  id          Int      @id @default(autoincrement())
+  harvestId   Int
+  name        String
+  quantity    Float
+  unit        String
+  price       Float
+  qrCode      String?
+  status      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  harvest     Harvest  @relation(fields: [harvestId], references: [id])
+  orderItems  OrderItem[]
+}
+
+model NftAsset {
+  id          Int      @id @default(autoincrement())
+  type        String   // FP_NFT, SH_NFT, EXP_NFT
+  farmId      Int?
+  plotId      Int?
+  seasonId    Int?
+  ownerUserId Int?
+  benefitDescription String?
+  expectedYield Float?
+  status      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  farm        Farm?    @relation(fields: [farmId], references: [id])
+  plot        Plot?    @relation(fields: [plotId], references: [id])
+  season      Season?  @relation(fields: [seasonId], references: [id])
+  ownerUser   User?    @relation("UserNftAssets", fields: [ownerUserId], references: [id])
+}
+
+model Order {
+  id          Int        @id @default(autoincrement())
+  buyerId     Int
+  totalAmount Float      @default(0)
+  paymentMethod String?
+  status      String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  buyer       User       @relation("UserOrders", fields: [buyerId], references: [id])
+  items       OrderItem[]
+}
+
+model OrderItem {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  productBatchId Int
+  quantity  Int      @default(1)
+  price     Float
+
+  order     Order   @relation(fields: [orderId], references: [id])
+  productBatch   ProductBatch @relation(fields: [productBatchId], references: [id])
+}
+
+model AdminLog {
+  id         Int      @id @default(autoincrement())
+  adminId    Int
+  action     String
+  targetType String
+  targetId   Int?
+  createdAt  DateTime @default(now())
+
+  admin      User     @relation("AdminLogs", fields: [adminId], references: [id])
+}
+
+
+
