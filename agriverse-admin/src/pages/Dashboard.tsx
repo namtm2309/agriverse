@@ -1,7 +1,16 @@
-import { Box, Card, CardContent, Grid, Stack, Typography } from '@mui/material';
+import {
+  Box,
+  Card,
+  CardActionArea,
+  CardContent,
+  Grid,
+  Stack,
+  Typography,
+} from '@mui/material';
 import { useDataProvider } from 'react-admin';
 import { useEffect, useState } from 'react';
 import { ViEnText } from '../components/ViEnText';
+import { useNavigate } from 'react-router-dom';
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 import HomeWorkOutlinedIcon from '@mui/icons-material/HomeWorkOutlined';
 import GridOnOutlinedIcon from '@mui/icons-material/GridOnOutlined';
@@ -16,6 +25,7 @@ type Kpi = {
   color: string;
   bg: string;
   Icon: any;
+  resource: string;
 };
 
 async function fetchTotal(dp: any, resource: string) {
@@ -29,6 +39,7 @@ async function fetchTotal(dp: any, resource: string) {
 
 export const Dashboard = () => {
   const dataProvider = useDataProvider();
+  const navigate = useNavigate();
   const [kpis, setKpis] = useState<Kpi[]>([
     {
       labelVi: 'Người dùng',
@@ -37,6 +48,7 @@ export const Dashboard = () => {
       color: '#2563eb',
       bg: 'rgba(37,99,235,0.12)',
       Icon: PeopleAltOutlinedIcon,
+      resource: 'users',
     },
     {
       labelVi: 'Trang trại',
@@ -45,6 +57,7 @@ export const Dashboard = () => {
       color: '#16a34a',
       bg: 'rgba(22,163,74,0.12)',
       Icon: HomeWorkOutlinedIcon,
+      resource: 'farms',
     },
     {
       labelVi: 'Lô đất',
@@ -53,6 +66,7 @@ export const Dashboard = () => {
       color: '#f97316',
       bg: 'rgba(249,115,22,0.12)',
       Icon: GridOnOutlinedIcon,
+      resource: 'plots',
     },
     {
       labelVi: 'Mùa vụ',
@@ -61,6 +75,7 @@ export const Dashboard = () => {
       color: '#8b5cf6',
       bg: 'rgba(139,92,246,0.12)',
       Icon: EventOutlinedIcon,
+      resource: 'seasons',
     },
     {
       labelVi: 'NFT',
@@ -69,6 +84,7 @@ export const Dashboard = () => {
       color: '#db2777',
       bg: 'rgba(219,39,119,0.12)',
       Icon: DiamondOutlinedIcon,
+      resource: 'nft-assets',
     },
     {
       labelVi: 'Đơn hàng',
@@ -77,6 +93,7 @@ export const Dashboard = () => {
       color: '#1d4ed8',
       bg: 'rgba(29,78,216,0.12)',
       Icon: ShoppingCartOutlinedIcon,
+      resource: 'orders',
     },
   ]);
 
@@ -115,57 +132,71 @@ export const Dashboard = () => {
       <Grid container spacing={2}>
         {kpis.map((k) => (
           <Grid item xs={12} sm={6} md={4} key={k.labelEn}>
-            <Card>
-              <CardContent>
-                <Stack direction="row" alignItems="center" justifyContent="space-between">
-                  <Box
-                    sx={{
-                      width: 42,
-                      height: 42,
-                      borderRadius: 999,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      backgroundColor: k.bg,
-                      color: k.color,
-                    }}
-                  >
-                    <k.Icon />
-                  </Box>
-                  <Box
-                    sx={{
-                      width: 90,
-                      height: 8,
-                      borderRadius: 999,
-                      backgroundColor: 'rgba(15,23,42,0.06)',
-                      overflow: 'hidden',
-                    }}
-                  >
+            <Card
+              sx={{
+                overflow: 'hidden',
+                transition: 'transform 160ms ease, box-shadow 160ms ease',
+                '&:hover': {
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 18px 45px rgba(15,23,42,0.10)',
+                },
+              }}
+            >
+              <CardActionArea
+                onClick={() => navigate(`/${k.resource}`)}
+                sx={{ height: '100%', alignItems: 'stretch' }}
+              >
+                <CardContent>
+                  <Stack direction="row" alignItems="center" justifyContent="space-between">
                     <Box
                       sx={{
-                        width: `${Math.min(100, (k.value ?? 0) * 10)}%`,
-                        height: '100%',
-                        backgroundColor: k.color,
+                        width: 42,
+                        height: 42,
+                        borderRadius: 999,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: k.bg,
+                        color: k.color,
                       }}
-                    />
-                  </Box>
-                </Stack>
+                    >
+                      <k.Icon />
+                    </Box>
+                    <Box
+                      sx={{
+                        width: 90,
+                        height: 8,
+                        borderRadius: 999,
+                        backgroundColor: 'rgba(15,23,42,0.06)',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: `${Math.min(100, (k.value ?? 0) * 10)}%`,
+                          height: '100%',
+                          backgroundColor: k.color,
+                        }}
+                      />
+                    </Box>
+                  </Stack>
 
-                <Typography variant="body2" sx={{ opacity: 0.75, mt: 1.5 }}>
-                  <ViEnText vi={k.labelVi} en={k.labelEn} />
-                </Typography>
-                <Typography
-                  variant="h3"
-                  sx={{
-                    fontWeight: 900,
-                    mt: 0.5,
-                    letterSpacing: -0.5,
-                    color: k.color, // dùng màu theo card để tránh "đen" quá
-                  }}
-                >
-                  {k.value ?? '…'}
-                </Typography>
-              </CardContent>
+                  <Typography variant="body2" sx={{ opacity: 0.75, mt: 1.5 }}>
+                    <ViEnText vi={k.labelVi} en={k.labelEn} />
+                  </Typography>
+                  <Typography
+                    variant="h3"
+                    sx={{
+                      fontWeight: 900,
+                      mt: 0.5,
+                      letterSpacing: -0.5,
+                      color: k.color, // dùng màu theo card để tránh "đen" quá
+                    }}
+                  >
+                    {k.value ?? '…'}
+                  </Typography>
+                </CardContent>
+              </CardActionArea>
             </Card>
           </Grid>
         ))}
