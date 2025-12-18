@@ -46,7 +46,11 @@ export class ProductBatchesService {
   }
 
   delete(id: number) {
-    return this.prisma.productBatch.delete({ where: { id } });
+    // Cascade xoá ProductBatch để tránh lỗi khoá ngoại (OrderItem)
+    return this.prisma.$transaction(async (tx) => {
+      await tx.orderItem.deleteMany({ where: { productBatchId: id } });
+      return tx.productBatch.delete({ where: { id } });
+    });
   }
 }
 

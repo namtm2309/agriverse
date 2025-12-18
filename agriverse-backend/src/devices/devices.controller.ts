@@ -7,11 +7,14 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { DevicesService } from './devices.service';
-import { withContentRange } from '../common/list-with-range.util';
+import { setContentRange } from '../common/list-with-range.util';
+import { parseRaListQuery } from '../common/ra/ra-list-query.util';
+import { applyRaListQuery } from '../common/ra/apply-ra-list.util';
 
 class CreateDeviceDto {
   plotId?: number;
@@ -27,9 +30,16 @@ export class DevicesController {
   constructor(private readonly devicesService: DevicesService) {}
 
   @Get()
-  async findAll(@Res({ passthrough: true }) res: Response) {
-    const items = await this.devicesService.findAll();
-    return withContentRange(res, 'devices', items);
+  async findAll(@Query() query: any, @Res({ passthrough: true }) res: Response) {
+    const items = (await this.devicesService.findAll()) as any[];
+    const ra = parseRaListQuery(query);
+    const { data, total, start, end } = applyRaListQuery(items, ra, [
+      'name',
+      'deviceType',
+      'status',
+    ] as any);
+    setContentRange(res, 'devices', start, end, total);
+    return data;
   }
 
   @Get(':id')

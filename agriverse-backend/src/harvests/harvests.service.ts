@@ -40,7 +40,21 @@ export class HarvestsService {
   }
 
   delete(id: number) {
-    return this.prisma.harvest.delete({ where: { id } });
+    // Cascade xoá Harvest để tránh lỗi khoá ngoại (ProductBatch/OrderItem)
+    return this.prisma.$transaction(async (tx) => {
+      const productBatches = await tx.productBatch.findMany({
+        where: { harvestId: id },
+        select: { id: true },
+      });
+      const productBatchIds = productBatches.map((pb) => pb.id);
+
+      await tx.orderItem.deleteMany({
+        where: { productBatchId: { in: productBatchIds } },
+      });
+      await tx.productBatch.deleteMany({ where: { id: { in: productBatchIds } } });
+
+      return tx.harvest.delete({ where: { id } });
+    });
   }
 }
 

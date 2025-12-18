@@ -3,23 +3,23 @@ import {
   Datagrid,
   TextField,
   ReferenceField,
-  Edit,
-  SimpleForm,
   TextInput,
   NumberInput,
+  NumberField,
   ReferenceInput,
   SelectInput,
-  Create,
   EditButton,
   DeleteButton,
 } from 'react-admin';
+import { PrettySimpleForm } from '../components/PrettySimpleForm';
+import { CreateDialog, EditDialog } from '../components/RaDialogViews';
 
 export const PlotsList = () => (
   <List>
     <Datagrid rowClick="edit">
       <TextField source="id" />
       <TextField source="code" />
-      <NumberInput source="areaSize" />
+      <NumberField source="areaSize" />
       <TextField source="soilType" />
       <ReferenceField source="farmId" reference="farms" />
       <EditButton />
@@ -29,8 +29,8 @@ export const PlotsList = () => (
 );
 
 export const PlotsEdit = () => (
-  <Edit>
-    <SimpleForm>
+  <EditDialog redirect="list">
+    <PrettySimpleForm>
       <TextInput source="code" />
       <NumberInput source="areaSize" />
       <TextInput source="soilType" />
@@ -40,13 +40,13 @@ export const PlotsEdit = () => (
       <ReferenceInput source="farmId" reference="farms">
         <SelectInput optionText="name" />
       </ReferenceInput>
-    </SimpleForm>
-  </Edit>
+    </PrettySimpleForm>
+  </EditDialog>
 );
 
 export const PlotsCreate = () => (
-  <Create>
-    <SimpleForm>
+  <CreateDialog redirect="list">
+    <PrettySimpleForm>
       <TextInput source="code" />
       <NumberInput source="areaSize" />
       <TextInput source="soilType" />
@@ -56,8 +56,8 @@ export const PlotsCreate = () => (
       <ReferenceInput source="farmId" reference="farms">
         <SelectInput optionText="name" />
       </ReferenceInput>
-    </SimpleForm>
-  </Create>
+    </PrettySimpleForm>
+  </CreateDialog>
 );
 
 

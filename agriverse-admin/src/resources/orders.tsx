@@ -3,24 +3,24 @@ import {
   Datagrid,
   TextField,
   DateField,
-  Edit,
-  SimpleForm,
+  NumberField,
   NumberInput,
   TextInput,
   ReferenceField,
   ReferenceInput,
   SelectInput,
-  Create,
   EditButton,
   DeleteButton,
 } from 'react-admin';
+import { PrettySimpleForm } from '../components/PrettySimpleForm';
+import { CreateDialog, EditDialog } from '../components/RaDialogViews';
 
 export const OrdersList = () => (
   <List>
     <Datagrid rowClick="edit">
       <TextField source="id" />
       <ReferenceField source="buyerId" reference="users" />
-      <NumberInput source="totalAmount" />
+      <NumberField source="totalAmount" />
       <TextField source="paymentMethod" />
       <TextField source="status" />
       <DateField source="createdAt" />
@@ -31,29 +31,29 @@ export const OrdersList = () => (
 );
 
 export const OrdersEdit = () => (
-  <Edit>
-    <SimpleForm>
+  <EditDialog redirect="list">
+    <PrettySimpleForm>
       <ReferenceInput source="buyerId" reference="users">
         <SelectInput optionText="username" />
       </ReferenceInput>
       <NumberInput source="totalAmount" />
       <TextInput source="paymentMethod" />
       <TextInput source="status" />
-    </SimpleForm>
-  </Edit>
+    </PrettySimpleForm>
+  </EditDialog>
 );
 
 export const OrdersCreate = () => (
-  <Create>
-    <SimpleForm>
+  <CreateDialog redirect="list">
+    <PrettySimpleForm>
       <ReferenceInput source="buyerId" reference="users">
         <SelectInput optionText="username" />
       </ReferenceInput>
       <NumberInput source="totalAmount" />
       <TextInput source="paymentMethod" />
       <TextInput source="status" />
-    </SimpleForm>
-  </Create>
+    </PrettySimpleForm>
+  </CreateDialog>
 );
 
 

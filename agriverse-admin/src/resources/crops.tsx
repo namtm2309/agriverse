@@ -2,14 +2,16 @@ import {
   List,
   Datagrid,
   TextField,
+  NumberField,
   Edit,
-  SimpleForm,
   TextInput,
   NumberInput,
   Create,
   EditButton,
   DeleteButton,
 } from 'react-admin';
+import { PrettySimpleForm } from '../components/PrettySimpleForm';
+import { CreateDialog, EditDialog } from '../components/RaDialogViews';
 
 export const CropsList = () => (
   <List>
@@ -17,7 +19,7 @@ export const CropsList = () => (
       <TextField source="id" />
       <TextField source="name" />
       <TextField source="variety" />
-      <NumberInput source="growthDays" />
+      <NumberField source="growthDays" />
       <EditButton />
       <DeleteButton />
     </Datagrid>
@@ -25,8 +27,8 @@ export const CropsList = () => (
 );
 
 export const CropsEdit = () => (
-  <Edit>
-    <SimpleForm>
+  <EditDialog redirect="list">
+    <PrettySimpleForm>
       <TextInput source="name" />
       <TextInput source="variety" />
       <NumberInput source="growthDays" />
@@ -34,13 +36,13 @@ export const CropsEdit = () => (
       <NumberInput source="tempMax" />
       <NumberInput source="humidityMin" />
       <NumberInput source="humidityMax" />
-    </SimpleForm>
-  </Edit>
+    </PrettySimpleForm>
+  </EditDialog>
 );
 
 export const CropsCreate = () => (
-  <Create>
-    <SimpleForm>
+  <CreateDialog redirect="list">
+    <PrettySimpleForm>
       <TextInput source="name" />
       <TextInput source="variety" />
       <NumberInput source="growthDays" />
@@ -48,8 +50,8 @@ export const CropsCreate = () => (
       <NumberInput source="tempMax" />
       <NumberInput source="humidityMin" />
       <NumberInput source="humidityMax" />
-    </SimpleForm>
-  </Create>
+    </PrettySimpleForm>
+  </CreateDialog>
 );
 
 

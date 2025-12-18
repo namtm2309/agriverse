@@ -2,16 +2,15 @@ import {
   List,
   Datagrid,
   TextField,
-  Edit,
-  SimpleForm,
   TextInput,
   ReferenceField,
   ReferenceInput,
   SelectInput,
-  Create,
   EditButton,
   DeleteButton,
 } from 'react-admin';
+import { PrettySimpleForm } from '../components/PrettySimpleForm';
+import { CreateDialog, EditDialog } from '../components/RaDialogViews';
 
 export const DevicesList = () => (
   <List>
@@ -28,29 +27,29 @@ export const DevicesList = () => (
 );
 
 export const DevicesEdit = () => (
-  <Edit>
-    <SimpleForm>
+  <EditDialog redirect="list">
+    <PrettySimpleForm>
       <TextInput source="name" />
       <TextInput source="deviceType" />
       <TextInput source="status" />
       <ReferenceInput source="plotId" reference="plots">
         <SelectInput optionText="code" />
       </ReferenceInput>
-    </SimpleForm>
-  </Edit>
+    </PrettySimpleForm>
+  </EditDialog>
 );
 
 export const DevicesCreate = () => (
-  <Create>
-    <SimpleForm>
+  <CreateDialog redirect="list">
+    <PrettySimpleForm>
       <TextInput source="name" />
       <TextInput source="deviceType" />
       <TextInput source="status" />
       <ReferenceInput source="plotId" reference="plots">
         <SelectInput optionText="code" />
       </ReferenceInput>
-    </SimpleForm>
-  </Create>
+    </PrettySimpleForm>
+  </CreateDialog>
 );
 
 

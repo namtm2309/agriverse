@@ -2,17 +2,17 @@ import {
   List,
   Datagrid,
   TextField,
-  Edit,
-  SimpleForm,
+  NumberField,
   TextInput,
   NumberInput,
   ReferenceField,
   ReferenceInput,
   SelectInput,
-  Create,
   EditButton,
   DeleteButton,
 } from 'react-admin';
+import { PrettySimpleForm } from '../components/PrettySimpleForm';
+import { CreateDialog, EditDialog } from '../components/RaDialogViews';
 
 export const ProductBatchesList = () => (
   <List>
@@ -20,9 +20,9 @@ export const ProductBatchesList = () => (
       <TextField source="id" />
       <ReferenceField source="harvestId" reference="harvests" />
       <TextField source="name" />
-      <NumberInput source="quantity" />
+      <NumberField source="quantity" />
       <TextField source="unit" />
-      <NumberInput source="price" />
+      <NumberField source="price" />
       <TextField source="status" />
       <EditButton />
       <DeleteButton />
@@ -31,8 +31,8 @@ export const ProductBatchesList = () => (
 );
 
 export const ProductBatchesEdit = () => (
-  <Edit>
-    <SimpleForm>
+  <EditDialog redirect="list">
+    <PrettySimpleForm>
       <ReferenceInput source="harvestId" reference="harvests">
         <SelectInput optionText="id" />
       </ReferenceInput>
@@ -42,13 +42,13 @@ export const ProductBatchesEdit = () => (
       <NumberInput source="price" />
       <TextInput source="qrCode" />
       <TextInput source="status" />
-    </SimpleForm>
-  </Edit>
+    </PrettySimpleForm>
+  </EditDialog>
 );
 
 export const ProductBatchesCreate = () => (
-  <Create>
-    <SimpleForm>
+  <CreateDialog redirect="list">
+    <PrettySimpleForm>
       <ReferenceInput source="harvestId" reference="harvests">
         <SelectInput optionText="id" />
       </ReferenceInput>
@@ -58,8 +58,8 @@ export const ProductBatchesCreate = () => (
       <NumberInput source="price" />
       <TextInput source="qrCode" />
       <TextInput source="status" />
-    </SimpleForm>
-  </Create>
+    </PrettySimpleForm>
+  </CreateDialog>
 );
 
 

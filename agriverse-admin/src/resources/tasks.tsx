@@ -3,17 +3,16 @@ import {
   Datagrid,
   TextField,
   DateField,
-  Edit,
-  SimpleForm,
   TextInput,
   DateInput,
   ReferenceField,
   ReferenceInput,
   SelectInput,
-  Create,
   EditButton,
   DeleteButton,
 } from 'react-admin';
+import { PrettySimpleForm } from '../components/PrettySimpleForm';
+import { CreateDialog, EditDialog } from '../components/RaDialogViews';
 
 export const TasksList = () => (
   <List>
@@ -31,8 +30,8 @@ export const TasksList = () => (
 );
 
 export const TasksEdit = () => (
-  <Edit>
-    <SimpleForm>
+  <EditDialog redirect="list">
+    <PrettySimpleForm>
       <ReferenceInput source="seasonId" reference="seasons">
         <SelectInput optionText="id" />
       </ReferenceInput>
@@ -41,13 +40,13 @@ export const TasksEdit = () => (
       <TextInput source="taskType" />
       <TextInput source="status" />
       <DateInput source="dueDate" />
-    </SimpleForm>
-  </Edit>
+    </PrettySimpleForm>
+  </EditDialog>
 );
 
 export const TasksCreate = () => (
-  <Create>
-    <SimpleForm>
+  <CreateDialog redirect="list">
+    <PrettySimpleForm>
       <ReferenceInput source="seasonId" reference="seasons">
         <SelectInput optionText="id" />
       </ReferenceInput>
@@ -56,8 +55,8 @@ export const TasksCreate = () => (
       <TextInput source="taskType" />
       <TextInput source="status" />
       <DateInput source="dueDate" />
-    </SimpleForm>
-  </Create>
+    </PrettySimpleForm>
+  </CreateDialog>
 );
 
 

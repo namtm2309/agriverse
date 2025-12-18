@@ -7,11 +7,14 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { FarmLogsService } from './farm-logs.service';
-import { withContentRange } from '../common/list-with-range.util';
+import { setContentRange } from '../common/list-with-range.util';
+import { parseRaListQuery } from '../common/ra/ra-list-query.util';
+import { applyRaListQuery } from '../common/ra/apply-ra-list.util';
 
 class CreateFarmLogDto {
   seasonId!: number;
@@ -27,9 +30,12 @@ export class FarmLogsController {
   constructor(private readonly farmLogsService: FarmLogsService) {}
 
   @Get()
-  async findAll(@Res({ passthrough: true }) res: Response) {
-    const items = await this.farmLogsService.findAll();
-    return withContentRange(res, 'farm-logs', items);
+  async findAll(@Query() query: any, @Res({ passthrough: true }) res: Response) {
+    const items = (await this.farmLogsService.findAll()) as any[];
+    const ra = parseRaListQuery(query);
+    const { data, total, start, end } = applyRaListQuery(items, ra, ['note', 'imageUrl'] as any);
+    setContentRange(res, 'farm-logs', start, end, total);
+    return data;
   }
 
   @Get(':id')

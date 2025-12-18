@@ -3,14 +3,20 @@ import {
   Datagrid,
   TextField,
   DateField,
-  Edit,
-  SimpleForm,
   TextInput,
-  Create,
   SelectInput,
+  FunctionField,
   EditButton,
   DeleteButton,
 } from 'react-admin';
+import { PrettySimpleForm } from '../components/PrettySimpleForm';
+import { CreateDialog, EditDialog } from '../components/RaDialogViews';
+import {
+  USER_ROLE_CHOICES,
+  USER_STATUS_CHOICES,
+  viEnOptionText,
+} from '../components/viEnChoices';
+import { ViEnText } from '../components/ViEnText';
 
 export const UsersList = () => (
   <List>
@@ -18,8 +24,20 @@ export const UsersList = () => (
       <TextField source="id" />
       <TextField source="username" />
       <TextField source="email" />
-      <TextField source="role" />
-      <TextField source="status" />
+      <FunctionField
+        source="role"
+        render={(record: any) => {
+          const c = USER_ROLE_CHOICES.find((x) => x.id === record?.role);
+          return c ? <ViEnText vi={c.vi} en={c.en} /> : record?.role;
+        }}
+      />
+      <FunctionField
+        source="status"
+        render={(record: any) => {
+          const c = USER_STATUS_CHOICES.find((x) => x.id === record?.status);
+          return c ? <ViEnText vi={c.vi} en={c.en} /> : record?.status;
+        }}
+      />
       <TextField source="walletAddress" />
       <DateField source="createdAt" />
       <EditButton />
@@ -29,57 +47,45 @@ export const UsersList = () => (
 );
 
 export const UsersEdit = () => (
-  <Edit>
-    <SimpleForm>
+  <EditDialog redirect="list">
+    <PrettySimpleForm>
       <TextInput source="username" />
       <TextInput source="email" />
       <TextInput source="walletAddress" />
       <TextInput source="password" type="password" />
       <SelectInput
         source="role"
-        choices={[
-          { id: 'ADMIN', name: 'ADMIN' },
-          { id: 'FARMER', name: 'FARMER' },
-          { id: 'INVESTOR', name: 'INVESTOR' },
-          { id: 'CONSUMER', name: 'CONSUMER' },
-        ]}
+        choices={USER_ROLE_CHOICES as any}
+        optionText={viEnOptionText as any}
       />
       <SelectInput
         source="status"
-        choices={[
-          { id: 'ACTIVE', name: 'active' },
-          { id: 'BLOCKED', name: 'blocked' },
-        ]}
+        choices={USER_STATUS_CHOICES as any}
+        optionText={viEnOptionText as any}
       />
-    </SimpleForm>
-  </Edit>
+    </PrettySimpleForm>
+  </EditDialog>
 );
 
 export const UsersCreate = () => (
-  <Create>
-    <SimpleForm>
+  <CreateDialog redirect="list">
+    <PrettySimpleForm>
       <TextInput source="username" />
       <TextInput source="email" />
       <TextInput source="walletAddress" />
       <TextInput source="password" type="password" />
       <SelectInput
         source="role"
-        choices={[
-          { id: 'ADMIN', name: 'ADMIN' },
-          { id: 'FARMER', name: 'FARMER' },
-          { id: 'INVESTOR', name: 'INVESTOR' },
-          { id: 'CONSUMER', name: 'CONSUMER' },
-        ]}
+        choices={USER_ROLE_CHOICES as any}
+        optionText={viEnOptionText as any}
       />
       <SelectInput
         source="status"
-        choices={[
-          { id: 'ACTIVE', name: 'active' },
-          { id: 'BLOCKED', name: 'blocked' },
-        ]}
+        choices={USER_STATUS_CHOICES as any}
+        optionText={viEnOptionText as any}
       />
-    </SimpleForm>
-  </Create>
+    </PrettySimpleForm>
+  </CreateDialog>
 );
 
 

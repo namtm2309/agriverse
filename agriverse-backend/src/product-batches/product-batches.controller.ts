@@ -7,11 +7,14 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { ProductBatchesService } from './product-batches.service';
-import { withContentRange } from '../common/list-with-range.util';
+import { setContentRange } from '../common/list-with-range.util';
+import { parseRaListQuery } from '../common/ra/ra-list-query.util';
+import { applyRaListQuery } from '../common/ra/apply-ra-list.util';
 
 class CreateProductBatchDto {
   harvestId!: number;
@@ -30,9 +33,17 @@ export class ProductBatchesController {
   constructor(private readonly productBatchesService: ProductBatchesService) {}
 
   @Get()
-  async findAll(@Res({ passthrough: true }) res: Response) {
-    const items = await this.productBatchesService.findAll();
-    return withContentRange(res, 'product-batches', items);
+  async findAll(@Query() query: any, @Res({ passthrough: true }) res: Response) {
+    const items = (await this.productBatchesService.findAll()) as any[];
+    const ra = parseRaListQuery(query);
+    const { data, total, start, end } = applyRaListQuery(items, ra, [
+      'name',
+      'unit',
+      'qrCode',
+      'status',
+    ] as any);
+    setContentRange(res, 'product-batches', start, end, total);
+    return data;
   }
 
   @Get(':id')

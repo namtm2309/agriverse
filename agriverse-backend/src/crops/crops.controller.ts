@@ -7,11 +7,14 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { CropsService } from './crops.service';
-import { withContentRange } from '../common/list-with-range.util';
+import { setContentRange } from '../common/list-with-range.util';
+import { parseRaListQuery } from '../common/ra/ra-list-query.util';
+import { applyRaListQuery } from '../common/ra/apply-ra-list.util';
 
 class CreateCropDto {
   name!: string;
@@ -30,9 +33,12 @@ export class CropsController {
   constructor(private readonly cropsService: CropsService) {}
 
   @Get()
-  async findAll(@Res({ passthrough: true }) res: Response) {
-    const items = await this.cropsService.findAll();
-    return withContentRange(res, 'crops', items);
+  async findAll(@Query() query: any, @Res({ passthrough: true }) res: Response) {
+    const items = (await this.cropsService.findAll()) as any[];
+    const ra = parseRaListQuery(query);
+    const { data, total, start, end } = applyRaListQuery(items, ra, ['name', 'variety'] as any);
+    setContentRange(res, 'crops', start, end, total);
+    return data;
   }
 
   @Get(':id')

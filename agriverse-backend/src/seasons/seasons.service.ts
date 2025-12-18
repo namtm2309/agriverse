@@ -44,7 +44,41 @@ export class SeasonsService {
   }
 
   delete(id: number) {
-    return this.prisma.season.delete({ where: { id } });
+    // Cascade xoá Season để tránh lỗi khoá ngoại (Task/Log/Harvest/ProductBatch/OrderItem/NftAsset)
+    return this.prisma.$transaction(async (tx) => {
+      const tasks = await tx.task.findMany({
+        where: { seasonId: id },
+        select: { id: true },
+      });
+      const taskIds = tasks.map((t) => t.id);
+
+      const harvests = await tx.harvest.findMany({
+        where: { seasonId: id },
+        select: { id: true },
+      });
+      const harvestIds = harvests.map((h) => h.id);
+
+      const productBatches = await tx.productBatch.findMany({
+        where: { harvestId: { in: harvestIds } },
+        select: { id: true },
+      });
+      const productBatchIds = productBatches.map((pb) => pb.id);
+
+      await tx.orderItem.deleteMany({
+        where: { productBatchId: { in: productBatchIds } },
+      });
+      await tx.productBatch.deleteMany({ where: { id: { in: productBatchIds } } });
+
+      await tx.farmLog.deleteMany({
+        where: { OR: [{ seasonId: id }, { taskId: { in: taskIds } }] },
+      });
+      await tx.task.deleteMany({ where: { id: { in: taskIds } } });
+
+      await tx.nftAsset.deleteMany({ where: { seasonId: id } });
+      await tx.harvest.deleteMany({ where: { id: { in: harvestIds } } });
+
+      return tx.season.delete({ where: { id } });
+    });
   }
 }
 

@@ -3,18 +3,18 @@ import {
   Datagrid,
   TextField,
   DateField,
-  Edit,
-  SimpleForm,
+  NumberField,
   TextInput,
   DateInput,
   NumberInput,
   ReferenceField,
   ReferenceInput,
   SelectInput,
-  Create,
   EditButton,
   DeleteButton,
 } from 'react-admin';
+import { PrettySimpleForm } from '../components/PrettySimpleForm';
+import { CreateDialog, EditDialog } from '../components/RaDialogViews';
 
 export const HarvestsList = () => (
   <List>
@@ -22,7 +22,7 @@ export const HarvestsList = () => (
       <TextField source="id" />
       <ReferenceField source="seasonId" reference="seasons" />
       <DateField source="harvestDate" />
-      <NumberInput source="actualYield" />
+      <NumberField source="actualYield" />
       <TextField source="qualityNote" />
       <EditButton />
       <DeleteButton />
@@ -31,29 +31,29 @@ export const HarvestsList = () => (
 );
 
 export const HarvestsEdit = () => (
-  <Edit>
-    <SimpleForm>
+  <EditDialog redirect="list">
+    <PrettySimpleForm>
       <ReferenceInput source="seasonId" reference="seasons">
         <SelectInput optionText="id" />
       </ReferenceInput>
       <DateInput source="harvestDate" />
       <NumberInput source="actualYield" />
       <TextInput source="qualityNote" multiline />
-    </SimpleForm>
-  </Edit>
+    </PrettySimpleForm>
+  </EditDialog>
 );
 
 export const HarvestsCreate = () => (
-  <Create>
-    <SimpleForm>
+  <CreateDialog redirect="list">
+    <PrettySimpleForm>
       <ReferenceInput source="seasonId" reference="seasons">
         <SelectInput optionText="id" />
       </ReferenceInput>
       <DateInput source="harvestDate" />
       <NumberInput source="actualYield" />
       <TextInput source="qualityNote" multiline />
-    </SimpleForm>
-  </Create>
+    </PrettySimpleForm>
+  </CreateDialog>
 );
 
 

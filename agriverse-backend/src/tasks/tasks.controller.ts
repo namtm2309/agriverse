@@ -1,5 +1,6 @@
 import {
   Body,
+  BadRequestException,
   Controller,
   Delete,
   Get,
@@ -7,11 +8,14 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { TasksService } from './tasks.service';
-import { withContentRange } from '../common/list-with-range.util';
+import { setContentRange } from '../common/list-with-range.util';
+import { parseRaListQuery } from '../common/ra/ra-list-query.util';
+import { applyRaListQuery } from '../common/ra/apply-ra-list.util';
 
 class CreateTaskDto {
   seasonId!: number;
@@ -29,9 +33,17 @@ export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Get()
-  async findAll(@Res({ passthrough: true }) res: Response) {
-    const items = await this.tasksService.findAll();
-    return withContentRange(res, 'tasks', items);
+  async findAll(@Query() query: any, @Res({ passthrough: true }) res: Response) {
+    const items = (await this.tasksService.findAll()) as any[];
+    const ra = parseRaListQuery(query);
+    const { data, total, start, end } = applyRaListQuery(items, ra, [
+      'title',
+      'description',
+      'taskType',
+      'status',
+    ] as any);
+    setContentRange(res, 'tasks', start, end, total);
+    return data;
   }
 
   @Get(':id')
@@ -40,13 +52,29 @@ export class TasksController {
   }
 
   @Post()
-  create(@Body() body: CreateTaskDto) {
-    return this.tasksService.create(body);
+  create(@Body() body: any) {
+    const { id: _id, createdAt: _createdAt, updatedAt: _updatedAt, ...data } = body ?? {};
+    if (data.dueDate) {
+      const d = new Date(data.dueDate);
+      if (Number.isNaN(d.getTime())) {
+        throw new BadRequestException('Hạn công việc không hợp lệ (Invalid dueDate)');
+      }
+      data.dueDate = d;
+    }
+    return this.tasksService.create(data);
   }
 
   @Put(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateTaskDto) {
-    return this.tasksService.update(id, body);
+  update(@Param('id', ParseIntPipe) id: number, @Body() body: any) {
+    const { id: _id, createdAt: _createdAt, updatedAt: _updatedAt, ...data } = body ?? {};
+    if (data.dueDate) {
+      const d = new Date(data.dueDate);
+      if (Number.isNaN(d.getTime())) {
+        throw new BadRequestException('Hạn công việc không hợp lệ (Invalid dueDate)');
+      }
+      data.dueDate = d;
+    }
+    return this.tasksService.update(id, data);
   }
 
   @Delete(':id')

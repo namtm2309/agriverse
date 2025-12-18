@@ -3,16 +3,17 @@ import {
   Datagrid,
   TextField,
   DateField,
-  Edit,
-  SimpleForm,
   TextInput,
+  NumberInput,
+  NumberField,
   ReferenceField,
   ReferenceInput,
   SelectInput,
-  Create,
   EditButton,
   DeleteButton,
 } from 'react-admin';
+import { PrettySimpleForm } from '../components/PrettySimpleForm';
+import { CreateDialog, EditDialog } from '../components/RaDialogViews';
 
 export const AdminLogsList = () => (
   <List>
@@ -21,7 +22,7 @@ export const AdminLogsList = () => (
       <ReferenceField source="adminId" reference="users" />
       <TextField source="action" />
       <TextField source="targetType" />
-      <TextField source="targetId" />
+      <NumberField source="targetId" />
       <DateField source="createdAt" />
       <EditButton />
       <DeleteButton />
@@ -30,29 +31,29 @@ export const AdminLogsList = () => (
 );
 
 export const AdminLogsEdit = () => (
-  <Edit>
-    <SimpleForm>
+  <EditDialog redirect="list">
+    <PrettySimpleForm>
       <ReferenceInput source="adminId" reference="users">
         <SelectInput optionText="username" />
       </ReferenceInput>
       <TextInput source="action" />
       <TextInput source="targetType" />
-      <TextInput source="targetId" />
-    </SimpleForm>
-  </Edit>
+      <NumberInput source="targetId" />
+    </PrettySimpleForm>
+  </EditDialog>
 );
 
 export const AdminLogsCreate = () => (
-  <Create>
-    <SimpleForm>
+  <CreateDialog redirect="list">
+    <PrettySimpleForm>
       <ReferenceInput source="adminId" reference="users">
         <SelectInput optionText="username" />
       </ReferenceInput>
       <TextInput source="action" />
       <TextInput source="targetType" />
-      <TextInput source="targetId" />
-    </SimpleForm>
-  </Create>
+      <NumberInput source="targetId" />
+    </PrettySimpleForm>
+  </CreateDialog>
 );
 
 

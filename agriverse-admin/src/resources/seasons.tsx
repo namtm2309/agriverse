@@ -3,17 +3,21 @@ import {
   Datagrid,
   TextField,
   DateField,
-  Edit,
-  SimpleForm,
+  TextInput,
   DateInput,
   NumberInput,
+  NumberField,
   ReferenceField,
   ReferenceInput,
   SelectInput,
-  Create,
   EditButton,
   DeleteButton,
+  FunctionField,
 } from 'react-admin';
+import { PrettySimpleForm } from '../components/PrettySimpleForm';
+import { CreateDialog, EditDialog } from '../components/RaDialogViews';
+import { SEASON_STATUS_CHOICES, viEnOptionText } from '../components/viEnChoices';
+import { ViEnText } from '../components/ViEnText';
 
 export const SeasonsList = () => (
   <List>
@@ -23,8 +27,14 @@ export const SeasonsList = () => (
       <ReferenceField source="cropId" reference="crops" />
       <DateField source="startDate" />
       <DateField source="expectedHarvestDate" />
-      <NumberInput source="expectedYield" />
-      <TextField source="status" />
+      <NumberField source="expectedYield" />
+      <FunctionField
+        source="status"
+        render={(record: any) => {
+          const c = SEASON_STATUS_CHOICES.find((x) => x.id === record?.status);
+          return c ? <ViEnText vi={c.vi} en={c.en} /> : record?.status;
+        }}
+      />
       <EditButton />
       <DeleteButton />
     </Datagrid>
@@ -32,8 +42,8 @@ export const SeasonsList = () => (
 );
 
 export const SeasonsEdit = () => (
-  <Edit>
-    <SimpleForm>
+  <EditDialog redirect="list">
+    <PrettySimpleForm>
       <ReferenceInput source="plotId" reference="plots">
         <SelectInput optionText="code" />
       </ReferenceInput>
@@ -43,14 +53,18 @@ export const SeasonsEdit = () => (
       <DateInput source="startDate" />
       <DateInput source="expectedHarvestDate" />
       <NumberInput source="expectedYield" />
-      <TextField source="status" />
-    </SimpleForm>
-  </Edit>
+      <SelectInput
+        source="status"
+        choices={SEASON_STATUS_CHOICES as any}
+        optionText={viEnOptionText as any}
+      />
+    </PrettySimpleForm>
+  </EditDialog>
 );
 
 export const SeasonsCreate = () => (
-  <Create>
-    <SimpleForm>
+  <CreateDialog redirect="list">
+    <PrettySimpleForm>
       <ReferenceInput source="plotId" reference="plots">
         <SelectInput optionText="code" />
       </ReferenceInput>
@@ -60,9 +74,13 @@ export const SeasonsCreate = () => (
       <DateInput source="startDate" />
       <DateInput source="expectedHarvestDate" />
       <NumberInput source="expectedYield" />
-      <TextField source="status" />
-    </SimpleForm>
-  </Create>
+      <SelectInput
+        source="status"
+        choices={SEASON_STATUS_CHOICES as any}
+        optionText={viEnOptionText as any}
+      />
+    </PrettySimpleForm>
+  </CreateDialog>
 );
 
 

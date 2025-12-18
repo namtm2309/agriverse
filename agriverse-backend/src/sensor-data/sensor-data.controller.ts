@@ -7,11 +7,14 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { SensorDataService } from './sensor-data.service';
-import { withContentRange } from '../common/list-with-range.util';
+import { setContentRange } from '../common/list-with-range.util';
+import { parseRaListQuery } from '../common/ra/ra-list-query.util';
+import { applyRaListQuery } from '../common/ra/apply-ra-list.util';
 
 class CreateSensorDataDto {
   deviceId!: number;
@@ -27,9 +30,12 @@ export class SensorDataController {
   constructor(private readonly sensorDataService: SensorDataService) {}
 
   @Get()
-  async findAll(@Res({ passthrough: true }) res: Response) {
-    const items = await this.sensorDataService.findAll();
-    return withContentRange(res, 'sensor-data', items);
+  async findAll(@Query() query: any, @Res({ passthrough: true }) res: Response) {
+    const items = (await this.sensorDataService.findAll()) as any[];
+    const ra = parseRaListQuery(query);
+    const { data, total, start, end } = applyRaListQuery(items, ra, ['id'] as any);
+    setContentRange(res, 'sensor-data', start, end, total);
+    return data;
   }
 
   @Get(':id')

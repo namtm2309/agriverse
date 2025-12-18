@@ -2,17 +2,17 @@ import {
   List,
   Datagrid,
   TextField,
-  Edit,
-  SimpleForm,
+  NumberField,
   TextInput,
   NumberInput,
   ReferenceField,
   ReferenceInput,
   SelectInput,
-  Create,
   EditButton,
   DeleteButton,
 } from 'react-admin';
+import { PrettySimpleForm } from '../components/PrettySimpleForm';
+import { CreateDialog, EditDialog } from '../components/RaDialogViews';
 
 export const NftAssetsList = () => (
   <List>
@@ -23,7 +23,7 @@ export const NftAssetsList = () => (
       <ReferenceField source="plotId" reference="plots" />
       <ReferenceField source="seasonId" reference="seasons" />
       <ReferenceField source="ownerUserId" reference="users" />
-      <NumberInput source="expectedYield" />
+      <NumberField source="expectedYield" />
       <TextField source="status" />
       <EditButton />
       <DeleteButton />
@@ -32,8 +32,8 @@ export const NftAssetsList = () => (
 );
 
 export const NftAssetsEdit = () => (
-  <Edit>
-    <SimpleForm>
+  <EditDialog redirect="list">
+    <PrettySimpleForm>
       <TextInput source="type" />
       <ReferenceInput source="farmId" reference="farms">
         <SelectInput optionText="name" />
@@ -50,13 +50,13 @@ export const NftAssetsEdit = () => (
       <TextInput source="benefitDescription" multiline />
       <NumberInput source="expectedYield" />
       <TextInput source="status" />
-    </SimpleForm>
-  </Edit>
+    </PrettySimpleForm>
+  </EditDialog>
 );
 
 export const NftAssetsCreate = () => (
-  <Create>
-    <SimpleForm>
+  <CreateDialog redirect="list">
+    <PrettySimpleForm>
       <TextInput source="type" />
       <ReferenceInput source="farmId" reference="farms">
         <SelectInput optionText="name" />
@@ -73,8 +73,8 @@ export const NftAssetsCreate = () => (
       <TextInput source="benefitDescription" multiline />
       <NumberInput source="expectedYield" />
       <TextInput source="status" />
-    </SimpleForm>
-  </Create>
+    </PrettySimpleForm>
+  </CreateDialog>
 );
 
 

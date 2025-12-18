@@ -13,12 +13,12 @@ export class AuthService {
   async validateUser(username: string, password: string) {
     const user = await this.usersService.findByUsername(username);
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Sai tài khoản hoặc mật khẩu (Invalid credentials)');
     }
 
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Sai tài khoản hoặc mật khẩu (Invalid credentials)');
     }
 
     return user;

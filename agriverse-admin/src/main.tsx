@@ -26,6 +26,9 @@ import { OrdersList, OrdersEdit, OrdersCreate } from './resources/orders';
 import { AdminLogsList, AdminLogsEdit, AdminLogsCreate } from './resources/adminLogs';
 import { authProvider } from './authProvider';
 import httpClient from './httpClient';
+import { i18nProvider } from './i18nProvider';
+import { theme } from './theme';
+import { MyLayout } from './layout/MyLayout';
 
 const API_URL = '/api';
 
@@ -37,48 +40,57 @@ const App = () => (
     dashboard={Dashboard}
     loginPage={LoginPage}
     authProvider={authProvider}
+    i18nProvider={i18nProvider}
+    theme={theme}
+    layout={MyLayout}
   >
-    <Resource name="users" list={UsersList} edit={UsersEdit} create={UsersCreate} />
-    <Resource name="areas" list={AreasList} edit={AreasEdit} create={AreasCreate} />
-    <Resource name="farms" list={FarmsList} edit={FarmsEdit} create={FarmsCreate} />
-    <Resource name="plots" list={PlotsList} edit={PlotsEdit} create={PlotsCreate} />
-    <Resource name="crops" list={CropsList} edit={CropsEdit} create={CropsCreate} />
-    <Resource name="seasons" list={SeasonsList} edit={SeasonsEdit} create={SeasonsCreate} />
-    <Resource name="tasks" list={TasksList} edit={TasksEdit} create={TasksCreate} />
+    <Resource name="users" options={{ label: 'Người dùng (Users)' }} list={UsersList} edit={UsersEdit} create={UsersCreate} />
+    <Resource name="areas" options={{ label: 'Khu vực (Areas)' }} list={AreasList} edit={AreasEdit} create={AreasCreate} />
+    <Resource name="farms" options={{ label: 'Trang trại (Farms)' }} list={FarmsList} edit={FarmsEdit} create={FarmsCreate} />
+    <Resource name="plots" options={{ label: 'Lô đất (Plots)' }} list={PlotsList} edit={PlotsEdit} create={PlotsCreate} />
+    <Resource name="crops" options={{ label: 'Giống cây (Crops)' }} list={CropsList} edit={CropsEdit} create={CropsCreate} />
+    <Resource name="seasons" options={{ label: 'Mùa vụ (Seasons)' }} list={SeasonsList} edit={SeasonsEdit} create={SeasonsCreate} />
+    <Resource name="tasks" options={{ label: 'Công việc (Tasks)' }} list={TasksList} edit={TasksEdit} create={TasksCreate} />
     <Resource
       name="farm-logs"
+      options={{ label: 'Nhật ký (Farm logs)' }}
       list={FarmLogsList}
       edit={FarmLogsEdit}
       create={FarmLogsCreate}
     />
-    <Resource name="devices" list={DevicesList} edit={DevicesEdit} create={DevicesCreate} />
+    <Resource name="devices" options={{ label: 'Thiết bị (Devices)' }} list={DevicesList} edit={DevicesEdit} create={DevicesCreate} />
     <Resource
       name="sensor-data"
+      options={{ label: 'Cảm biến (Sensor data)' }}
       list={SensorDataList}
       edit={SensorDataEdit}
       create={SensorDataCreate}
     />
     <Resource
       name="harvests"
+      options={{ label: 'Thu hoạch (Harvests)' }}
       list={HarvestsList}
       edit={HarvestsEdit}
       create={HarvestsCreate}
     />
     <Resource
       name="product-batches"
+      options={{ label: 'Lô sản phẩm (Product batches)' }}
       list={ProductBatchesList}
       edit={ProductBatchesEdit}
       create={ProductBatchesCreate}
     />
     <Resource
       name="nft-assets"
+      options={{ label: 'NFT (NFT assets)' }}
       list={NftAssetsList}
       edit={NftAssetsEdit}
       create={NftAssetsCreate}
     />
-    <Resource name="orders" list={OrdersList} edit={OrdersEdit} create={OrdersCreate} />
+    <Resource name="orders" options={{ label: 'Đơn hàng (Orders)' }} list={OrdersList} edit={OrdersEdit} create={OrdersCreate} />
     <Resource
       name="admin-logs"
+      options={{ label: 'Log quản trị (Admin logs)' }}
       list={AdminLogsList}
       edit={AdminLogsEdit}
       create={AdminLogsCreate}

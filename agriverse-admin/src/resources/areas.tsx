@@ -2,16 +2,18 @@ import {
   List,
   Datagrid,
   TextField,
-  Edit,
-  SimpleForm,
   TextInput,
-  Create,
   EditButton,
   DeleteButton,
   ReferenceField,
   ReferenceInput,
   SelectInput,
+  FunctionField,
 } from 'react-admin';
+import { PrettySimpleForm } from '../components/PrettySimpleForm';
+import { CreateDialog, EditDialog } from '../components/RaDialogViews';
+import { AREA_LEVEL_CHOICES, viEnOptionText } from '../components/viEnChoices';
+import { ViEnText } from '../components/ViEnText';
 
 export const AreasList = () => (
   <List>
@@ -19,7 +21,13 @@ export const AreasList = () => (
       <TextField source="id" />
       <TextField source="name" />
       <ReferenceField source="parentId" reference="areas" />
-      <TextField source="level" />
+      <FunctionField
+        source="level"
+        render={(record: any) => {
+          const c = AREA_LEVEL_CHOICES.find((x) => x.id === record?.level);
+          return c ? <ViEnText vi={c.vi} en={c.en} /> : record?.level;
+        }}
+      />
       <EditButton />
       <DeleteButton />
     </Datagrid>
@@ -27,40 +35,34 @@ export const AreasList = () => (
 );
 
 export const AreasEdit = () => (
-  <Edit>
-    <SimpleForm>
+  <EditDialog redirect="list">
+    <PrettySimpleForm>
       <TextInput source="name" />
       <ReferenceInput source="parentId" reference="areas">
         <SelectInput optionText="name" />
       </ReferenceInput>
       <SelectInput
         source="level"
-        choices={[
-          { id: 'province', name: 'province' },
-          { id: 'district', name: 'district' },
-          { id: 'commune', name: 'commune' },
-        ]}
+        choices={AREA_LEVEL_CHOICES as any}
+        optionText={viEnOptionText as any}
       />
-    </SimpleForm>
-  </Edit>
+    </PrettySimpleForm>
+  </EditDialog>
 );
 
 export const AreasCreate = () => (
-  <Create>
-    <SimpleForm>
+  <CreateDialog redirect="list">
+    <PrettySimpleForm>
       <TextInput source="name" />
       <ReferenceInput source="parentId" reference="areas">
         <SelectInput optionText="name" />
       </ReferenceInput>
       <SelectInput
         source="level"
-        choices={[
-          { id: 'province', name: 'province' },
-          { id: 'district', name: 'district' },
-          { id: 'commune', name: 'commune' },
-        ]}
+        choices={AREA_LEVEL_CHOICES as any}
+        optionText={viEnOptionText as any}
       />
-    </SimpleForm>
-  </Create>
+    </PrettySimpleForm>
+  </CreateDialog>
 );
 

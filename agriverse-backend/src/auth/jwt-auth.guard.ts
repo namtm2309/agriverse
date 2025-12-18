@@ -17,12 +17,12 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
   handleRequest(err: any, user: any) {
     if (err || !user) {
-      throw err || new UnauthorizedException('Unauthorized');
+      throw err || new UnauthorizedException('Không có quyền truy cập (Unauthorized)');
     }
 
     // Chỉ cho phép user có role ADMIN truy cập backend admin
     if (user.role !== 'ADMIN') {
-      throw new UnauthorizedException('Admin role required');
+      throw new UnauthorizedException('Chỉ ADMIN được phép truy cập (Admin role required)');
     }
 
     return user;

@@ -40,7 +40,11 @@ export class OrdersService {
   }
 
   delete(id: number) {
-    return this.prisma.order.delete({ where: { id } });
+    // Cascade xoá Order để tránh lỗi khoá ngoại (OrderItem)
+    return this.prisma.$transaction(async (tx) => {
+      await tx.orderItem.deleteMany({ where: { orderId: id } });
+      return tx.order.delete({ where: { id } });
+    });
   }
 }
 

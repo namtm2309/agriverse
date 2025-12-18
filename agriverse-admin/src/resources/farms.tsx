@@ -3,15 +3,21 @@ import {
   Datagrid,
   TextField,
   ReferenceField,
-  Edit,
-  SimpleForm,
   TextInput,
   ReferenceInput,
   SelectInput,
-  Create,
   EditButton,
   DeleteButton,
+  FunctionField,
 } from 'react-admin';
+import { PrettySimpleForm } from '../components/PrettySimpleForm';
+import { CreateDialog, EditDialog } from '../components/RaDialogViews';
+import {
+  FARM_CERTIFICATION_CHOICES,
+  FARM_STATUS_CHOICES,
+  viEnOptionText,
+} from '../components/viEnChoices';
+import { ViEnText } from '../components/ViEnText';
 
 export const FarmsList = () => (
   <List>
@@ -21,8 +27,20 @@ export const FarmsList = () => (
       <ReferenceField source="areaId" reference="areas" />
       <ReferenceField source="ownerId" reference="users" />
       <TextField source="address" />
-      <TextField source="certification" />
-      <TextField source="status" />
+      <FunctionField
+        source="certification"
+        render={(record: any) => {
+          const c = FARM_CERTIFICATION_CHOICES.find((x) => x.id === record?.certification);
+          return c ? <ViEnText vi={c.vi} en={c.en} /> : record?.certification;
+        }}
+      />
+      <FunctionField
+        source="status"
+        render={(record: any) => {
+          const c = FARM_STATUS_CHOICES.find((x) => x.id === record?.status);
+          return c ? <ViEnText vi={c.vi} en={c.en} /> : record?.status;
+        }}
+      />
       <EditButton />
       <DeleteButton />
     </Datagrid>
@@ -30,8 +48,8 @@ export const FarmsList = () => (
 );
 
 export const FarmsEdit = () => (
-  <Edit>
-    <SimpleForm>
+  <EditDialog redirect="list">
+    <PrettySimpleForm>
       <TextInput source="name" />
       <ReferenceInput source="areaId" reference="areas">
         <SelectInput optionText="name" />
@@ -42,25 +60,21 @@ export const FarmsEdit = () => (
       <TextInput source="address" />
       <SelectInput
         source="certification"
-        choices={[
-          { id: 'VietGAP', name: 'VietGAP' },
-          { id: 'GlobalGAP', name: 'GlobalGAP' },
-        ]}
+        choices={FARM_CERTIFICATION_CHOICES as any}
+        optionText={viEnOptionText as any}
       />
       <SelectInput
         source="status"
-        choices={[
-          { id: 'pending', name: 'pending' },
-          { id: 'approved', name: 'approved' },
-        ]}
+        choices={FARM_STATUS_CHOICES as any}
+        optionText={viEnOptionText as any}
       />
-    </SimpleForm>
-  </Edit>
+    </PrettySimpleForm>
+  </EditDialog>
 );
 
 export const FarmsCreate = () => (
-  <Create>
-    <SimpleForm>
+  <CreateDialog redirect="list">
+    <PrettySimpleForm>
       <TextInput source="name" />
       <ReferenceInput source="areaId" reference="areas">
         <SelectInput optionText="name" />
@@ -71,20 +85,16 @@ export const FarmsCreate = () => (
       <TextInput source="address" />
       <SelectInput
         source="certification"
-        choices={[
-          { id: 'VietGAP', name: 'VietGAP' },
-          { id: 'GlobalGAP', name: 'GlobalGAP' },
-        ]}
+        choices={FARM_CERTIFICATION_CHOICES as any}
+        optionText={viEnOptionText as any}
       />
       <SelectInput
         source="status"
-        choices={[
-          { id: 'pending', name: 'pending' },
-          { id: 'approved', name: 'approved' },
-        ]}
+        choices={FARM_STATUS_CHOICES as any}
+        optionText={viEnOptionText as any}
       />
-    </SimpleForm>
-  </Create>
+    </PrettySimpleForm>
+  </CreateDialog>
 );
 
 
