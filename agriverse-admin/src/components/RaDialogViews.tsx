@@ -20,16 +20,18 @@ import { splitViEn, ViEnText } from './ViEnText';
 function DialogHeader({ title }: { title: string }) {
   const { vi, en } = splitViEn(title);
   return (
-    <Typography
-      variant="h5"
+    <Box
+      component="span"
       sx={{
         fontWeight: 900,
         letterSpacing: -0.6,
         textAlign: 'center',
+        fontSize: '1.5rem',
+        lineHeight: 1.2,
       }}
     >
       <ViEnText vi={vi} en={en} enScale={0.55} />
-    </Typography>
+    </Box>
   );
 }
 
@@ -47,16 +49,16 @@ const CreateDialogInner = ({ children }: { children: any }) => {
   return (
     <Dialog
       open
-      fullWidth
-      maxWidth="md"
       onClose={() => redirect('list', resource)}
+      maxWidth={false}
       PaperProps={{
         sx: {
           borderRadius: 4,
           overflow: 'hidden',
           border: '1px solid rgba(15,23,42,0.10)',
           boxShadow: '0 40px 100px rgba(15,23,42,0.18)',
-          maxWidth: 980,
+          width: 'auto',
+          maxWidth: 'none',
         },
       }}
     >
@@ -66,18 +68,28 @@ const CreateDialogInner = ({ children }: { children: any }) => {
           px: { xs: 2.5, md: 3.5 },
           backgroundColor: '#ffffff',
           position: 'relative',
+          width: '100%',
+          boxSizing: 'border-box',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
         <DialogHeader title={defaultTitle} />
         <IconButton
           onClick={() => redirect('list', resource)}
           size="small"
-          sx={{ position: 'absolute', top: 16, right: 16 }}
+          sx={{
+            position: 'absolute',
+            top: 16,
+            right: 16,
+            zIndex: 1,
+          }}
         >
           <CloseIcon fontSize="small" />
         </IconButton>
       </DialogTitle>
-      <DialogContent sx={{ p: 0, backgroundColor: '#ffffff', overflowX: 'hidden' }}>
+      <DialogContent sx={{ p: 0, backgroundColor: '#ffffff', overflowX: 'hidden', width: '100%' }}>
         {children}
       </DialogContent>
     </Dialog>
@@ -98,16 +110,16 @@ const EditDialogInner = ({ children }: { children: any }) => {
   return (
     <Dialog
       open
-      fullWidth
-      maxWidth="md"
       onClose={() => redirect('list', resource)}
+      maxWidth={false}
       PaperProps={{
         sx: {
           borderRadius: 4,
           overflow: 'hidden',
           border: '1px solid rgba(15,23,42,0.10)',
           boxShadow: '0 40px 100px rgba(15,23,42,0.18)',
-          maxWidth: 980,
+          width: 'auto',
+          maxWidth: 'none',
         },
       }}
     >
@@ -117,18 +129,28 @@ const EditDialogInner = ({ children }: { children: any }) => {
           px: { xs: 2.5, md: 3.5 },
           backgroundColor: '#ffffff',
           position: 'relative',
+          width: '100%',
+          boxSizing: 'border-box',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
         <DialogHeader title={defaultTitle} />
         <IconButton
           onClick={() => redirect('list', resource)}
           size="small"
-          sx={{ position: 'absolute', top: 16, right: 16 }}
+          sx={{
+            position: 'absolute',
+            top: 16,
+            right: 16,
+            zIndex: 1,
+          }}
         >
           <CloseIcon fontSize="small" />
         </IconButton>
       </DialogTitle>
-      <DialogContent sx={{ p: 0, backgroundColor: '#ffffff', overflowX: 'hidden' }}>
+      <DialogContent sx={{ p: 0, backgroundColor: '#ffffff', overflowX: 'hidden', width: '100%' }}>
         {children}
       </DialogContent>
     </Dialog>

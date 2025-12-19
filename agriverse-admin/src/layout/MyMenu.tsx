@@ -1,5 +1,6 @@
 import { MenuItemLink, useGetResourceLabel, useResourceDefinitions } from 'react-admin';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import BarChartIcon from '@mui/icons-material/BarChart';
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
 import HomeWorkOutlinedIcon from '@mui/icons-material/HomeWorkOutlined';
@@ -121,6 +122,34 @@ export const MyMenu = () => {
           borderRadius: 2,
           '&.RaMenuItemLink-active': {
             backgroundColor: 'rgba(37,99,235,0.10)',
+          },
+        }}
+      />
+      <MenuItemLink
+        to="/statistics"
+        primaryText={<ViEnText vi="Phân tích & Thống kê" en="Statistics & Analytics" />}
+        leftIcon={
+          <Box
+            sx={{
+              width: 28,
+              height: 28,
+              borderRadius: 999,
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: 'rgba(139,92,246,0.12)',
+              color: '#8b5cf6',
+            }}
+          >
+            <BarChartIcon fontSize="small" />
+          </Box>
+        }
+        sx={{
+          mx: 1,
+          my: 0.5,
+          borderRadius: 2,
+          '&.RaMenuItemLink-active': {
+            backgroundColor: 'rgba(139,92,246,0.10)',
           },
         }}
       />

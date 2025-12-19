@@ -22,6 +22,8 @@ model User {
   orders    Order[]       @relation("UserOrders")
   nftAssets NftAsset[]    @relation("UserNftAssets")
   adminLogs AdminLog[]    @relation("AdminLogs")
+  notifications Notification[] @relation("UserNotifications")
+  uploadedFiles UploadedFile[] @relation("UserUploadedFiles")
 }
 
 model Area {
@@ -240,6 +242,45 @@ model AdminLog {
   createdAt  DateTime @default(now())
 
   admin      User     @relation("AdminLogs", fields: [adminId], references: [id])
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  type      String   // TASK_DUE, SENSOR_ALERT, ORDER_NEW, HARVEST_READY, etc.
+  title     String
+  message   String
+  link      String?  // URL to related resource
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  readAt    DateTime?
+
+  user      User     @relation("UserNotifications", fields: [userId], references: [id])
+}
+
+model Webhook {
+  id          Int      @id @default(autoincrement())
+  url         String
+  events      String   // JSON array of event types: ["farm-log.created", "harvest.created"]
+  secret      String?  // Secret for webhook signature
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model UploadedFile {
+  id          Int      @id @default(autoincrement())
+  filename    String
+  originalName String
+  mimeType    String
+  size        Int      // bytes
+  path        String   // Relative path from uploads folder
+  ownerId     Int?     // User who uploaded
+  resourceType String? // farm-log, harvest, etc.
+  resourceId   Int?    // ID of related resource
+  createdAt   DateTime @default(now())
+
+  owner       User?    @relation("UserUploadedFiles", fields: [ownerId], references: [id])
 }
 
 

@@ -36,9 +36,9 @@ export const SensorDataEdit = () => (
       <ReferenceInput source="deviceId" reference="devices">
         <SelectInput optionText="name" />
       </ReferenceInput>
-      <NumberInput source="temperature" />
-      <NumberInput source="humidity" />
-      <NumberInput source="soilMoisture" />
+      <NumberInput source="temperature" helperText="Đơn vị: °C (Unit: Celsius)" />
+      <NumberInput source="humidity" helperText="Đơn vị: % (Unit: percentage)" />
+      <NumberInput source="soilMoisture" helperText="Đơn vị: % (Unit: percentage)" />
     </PrettySimpleForm>
   </EditDialog>
 );
@@ -49,9 +49,9 @@ export const SensorDataCreate = () => (
       <ReferenceInput source="deviceId" reference="devices">
         <SelectInput optionText="name" />
       </ReferenceInput>
-      <NumberInput source="temperature" />
-      <NumberInput source="humidity" />
-      <NumberInput source="soilMoisture" />
+      <NumberInput source="temperature" helperText="Đơn vị: °C (Unit: Celsius)" />
+      <NumberInput source="humidity" helperText="Đơn vị: % (Unit: percentage)" />
+      <NumberInput source="soilMoisture" helperText="Đơn vị: % (Unit: percentage)" />
     </PrettySimpleForm>
   </CreateDialog>
 );

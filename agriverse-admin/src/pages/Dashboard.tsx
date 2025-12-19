@@ -6,6 +6,8 @@ import {
   Grid,
   Stack,
   Typography,
+  Chip,
+  LinearProgress,
 } from '@mui/material';
 import { useDataProvider } from 'react-admin';
 import { useEffect, useState } from 'react';
@@ -17,6 +19,10 @@ import GridOnOutlinedIcon from '@mui/icons-material/GridOnOutlined';
 import EventOutlinedIcon from '@mui/icons-material/EventOutlined';
 import DiamondOutlinedIcon from '@mui/icons-material/DiamondOutlined';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined';
+import DevicesOtherOutlinedIcon from '@mui/icons-material/DevicesOtherOutlined';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import httpClient from '../httpClient';
 
 type Kpi = {
   labelVi: string;
@@ -37,9 +43,23 @@ async function fetchTotal(dp: any, resource: string) {
   return typeof res?.total === 'number' ? res.total : 0;
 }
 
+async function fetchStatistics() {
+  try {
+    const response = await httpClient('http://localhost:4000/api/statistics/overview', {
+      method: 'GET',
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Failed to fetch statistics:', error);
+    return null;
+  }
+}
+
 export const Dashboard = () => {
   const dataProvider = useDataProvider();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState<any>(null);
   const [kpis, setKpis] = useState<Kpi[]>([
     {
       labelVi: 'Người dùng',
@@ -99,7 +119,12 @@ export const Dashboard = () => {
 
   useEffect(() => {
     let mounted = true;
+    setLoading(true);
     (async () => {
+      // Fetch statistics từ API mới
+      const statistics = await fetchStatistics();
+      
+      // Fallback về cách cũ nếu statistics API không có
       const totals = await Promise.all([
         fetchTotal(dataProvider, 'users'),
         fetchTotal(dataProvider, 'farms'),
@@ -108,26 +133,236 @@ export const Dashboard = () => {
         fetchTotal(dataProvider, 'nft-assets'),
         fetchTotal(dataProvider, 'orders'),
       ]);
+      
       if (!mounted) return;
-      setKpis((prev) => prev.map((k, i) => ({ ...k, value: totals[i] })));
+      
+      // Update KPIs với dữ liệu từ statistics API nếu có
+      if (statistics) {
+        setStats(statistics);
+        setKpis((prev) => [
+          { ...prev[0], value: statistics.users?.total ?? totals[0] },
+          { ...prev[1], value: statistics.farms?.total ?? totals[1] },
+          { ...prev[2], value: statistics.plots?.total ?? totals[2] },
+          { ...prev[3], value: statistics.seasons?.total ?? totals[3] },
+          { ...prev[4], value: statistics.productBatches?.total ?? totals[4] },
+          { ...prev[5], value: statistics.orders?.total ?? totals[5] },
+        ]);
+      } else {
+        setKpis((prev) => prev.map((k, i) => ({ ...k, value: totals[i] })));
+      }
+      setLoading(false);
     })();
     return () => {
       mounted = false;
     };
   }, [dataProvider]);
 
+  if (loading) {
+    return (
+      <Stack spacing={2}>
+        <Card>
+          <CardContent>
+            <Typography variant="h5" sx={{ fontWeight: 800 }}>
+              <ViEnText vi="Bảng điều khiển" en="Dashboard" />
+            </Typography>
+            <LinearProgress sx={{ mt: 2 }} />
+          </CardContent>
+        </Card>
+      </Stack>
+    );
+  }
+
   return (
     <Stack spacing={2}>
       <Card>
         <CardContent>
-          <Typography variant="h5" sx={{ fontWeight: 800 }}>
-            <ViEnText vi="Bảng điều khiển" en="Dashboard" />
-          </Typography>
-          <Typography variant="body2" sx={{ opacity: 0.75, mt: 0.5 }}>
-            Tổng quan hệ thống nông nghiệp số hoá (Smart agriculture overview)
-          </Typography>
+          <Stack direction="row" alignItems="center" justifyContent="space-between">
+            <Box>
+              <Typography variant="h5" sx={{ fontWeight: 800 }}>
+                <ViEnText vi="Bảng điều khiển" en="Dashboard" />
+              </Typography>
+              <Typography variant="body2" sx={{ opacity: 0.75, mt: 0.5 }}>
+                Tổng quan hệ thống nông nghiệp số hoá (Smart agriculture overview)
+              </Typography>
+            </Box>
+            {stats && (
+              <Chip
+                icon={<TrendingUpIcon />}
+                label={<ViEnText vi="Dữ liệu thời gian thực" en="Real-time data" />}
+                color="primary"
+                variant="outlined"
+              />
+            )}
+          </Stack>
         </CardContent>
       </Card>
+
+      {/* Statistics Summary Cards */}
+      {stats && (
+        <Grid container spacing={2}>
+          {stats.tasks && (
+            <Grid item xs={12} sm={6} md={3}>
+              <Card>
+                <CardContent>
+                  <Stack direction="row" alignItems="center" justifyContent="space-between">
+                    <Box>
+                      <Typography variant="body2" sx={{ opacity: 0.75 }}>
+                        <ViEnText vi="Công việc" en="Tasks" />
+                      </Typography>
+                      <Typography variant="h4" sx={{ fontWeight: 700, mt: 0.5 }}>
+                        {stats.tasks.total || 0}
+                      </Typography>
+                      <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+                        <Chip
+                          label={`${stats.tasks.completed || 0} hoàn thành`}
+                          size="small"
+                          color="success"
+                          variant="outlined"
+                        />
+                        {stats.tasks.overdue > 0 && (
+                          <Chip
+                            label={`${stats.tasks.overdue} quá hạn`}
+                            size="small"
+                            color="error"
+                            variant="outlined"
+                          />
+                        )}
+                      </Stack>
+                    </Box>
+                    <Box
+                      sx={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: 999,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: 'rgba(6,182,212,0.12)',
+                        color: '#06b6d4',
+                      }}
+                    >
+                      <TaskAltOutlinedIcon />
+                    </Box>
+                  </Stack>
+                </CardContent>
+              </Card>
+            </Grid>
+          )}
+          {stats.devices && (
+            <Grid item xs={12} sm={6} md={3}>
+              <Card>
+                <CardContent>
+                  <Stack direction="row" alignItems="center" justifyContent="space-between">
+                    <Box>
+                      <Typography variant="body2" sx={{ opacity: 0.75 }}>
+                        <ViEnText vi="Thiết bị" en="Devices" />
+                      </Typography>
+                      <Typography variant="h4" sx={{ fontWeight: 700, mt: 0.5 }}>
+                        {stats.devices.total || 0}
+                      </Typography>
+                      <Chip
+                        label={`${stats.devices.active || 0} đang hoạt động`}
+                        size="small"
+                        color="success"
+                        variant="outlined"
+                        sx={{ mt: 1 }}
+                      />
+                    </Box>
+                    <Box
+                      sx={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: 999,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: 'rgba(15,23,42,0.12)',
+                        color: '#0f172a',
+                      }}
+                    >
+                      <DevicesOtherOutlinedIcon />
+                    </Box>
+                  </Stack>
+                </CardContent>
+              </Card>
+            </Grid>
+          )}
+          {stats.orders && stats.orders.revenue > 0 && (
+            <Grid item xs={12} sm={6} md={3}>
+              <Card>
+                <CardContent>
+                  <Stack direction="row" alignItems="center" justifyContent="space-between">
+                    <Box>
+                      <Typography variant="body2" sx={{ opacity: 0.75 }}>
+                        <ViEnText vi="Doanh thu" en="Revenue" />
+                      </Typography>
+                      <Typography variant="h4" sx={{ fontWeight: 700, mt: 0.5 }}>
+                        {new Intl.NumberFormat('vi-VN', {
+                          style: 'currency',
+                          currency: 'VND',
+                        }).format(stats.orders.revenue)}
+                      </Typography>
+                      <Chip
+                        label={`${stats.orders.completed || 0} đơn hoàn thành`}
+                        size="small"
+                        color="success"
+                        variant="outlined"
+                        sx={{ mt: 1 }}
+                      />
+                    </Box>
+                    <Box
+                      sx={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: 999,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: 'rgba(29,78,216,0.12)',
+                        color: '#1d4ed8',
+                      }}
+                    >
+                      <ShoppingCartOutlinedIcon />
+                    </Box>
+                  </Stack>
+                </CardContent>
+              </Card>
+            </Grid>
+          )}
+          {stats.summary && stats.summary.activeSeasons > 0 && (
+            <Grid item xs={12} sm={6} md={3}>
+              <Card>
+                <CardContent>
+                  <Stack direction="row" alignItems="center" justifyContent="space-between">
+                    <Box>
+                      <Typography variant="body2" sx={{ opacity: 0.75 }}>
+                        <ViEnText vi="Mùa vụ đang canh tác" en="Active Seasons" />
+                      </Typography>
+                      <Typography variant="h4" sx={{ fontWeight: 700, mt: 0.5 }}>
+                        {stats.summary.activeSeasons}
+                      </Typography>
+                    </Box>
+                    <Box
+                      sx={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: 999,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: 'rgba(139,92,246,0.12)',
+                        color: '#8b5cf6',
+                      }}
+                    >
+                      <EventOutlinedIcon />
+                    </Box>
+                  </Stack>
+                </CardContent>
+              </Card>
+            </Grid>
+          )}
+        </Grid>
+      )}
 
       <Grid container spacing={2}>
         {kpis.map((k) => (

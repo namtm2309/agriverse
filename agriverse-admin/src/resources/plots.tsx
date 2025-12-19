@@ -32,7 +32,7 @@ export const PlotsEdit = () => (
   <EditDialog redirect="list">
     <PrettySimpleForm>
       <TextInput source="code" />
-      <NumberInput source="areaSize" />
+      <NumberInput source="areaSize" helperText="Đơn vị: m² (Unit: square meters)" />
       <TextInput source="soilType" />
       <TextInput source="waterSource" />
       <TextInput source="gpsPolygon" />
@@ -48,7 +48,7 @@ export const PlotsCreate = () => (
   <CreateDialog redirect="list">
     <PrettySimpleForm>
       <TextInput source="code" />
-      <NumberInput source="areaSize" />
+      <NumberInput source="areaSize" helperText="Đơn vị: m² (Unit: square meters)" />
       <TextInput source="soilType" />
       <TextInput source="waterSource" />
       <TextInput source="gpsPolygon" />

@@ -5,6 +5,7 @@ import simpleRestProvider from 'ra-data-simple-rest';
 import { Route } from 'react-router-dom';
 import { Dashboard } from './pages/Dashboard';
 import { LoginPage } from './pages/LoginPage';
+import { StatisticsPage } from './pages/StatisticsPage';
 import { UsersList, UsersEdit, UsersCreate } from './resources/users';
 import { AreasList, AreasEdit, AreasCreate } from './resources/areas';
 import { FarmsList, FarmsEdit, FarmsCreate } from './resources/farms';
@@ -23,7 +24,7 @@ import {
 } from './resources/productBatches';
 import { NftAssetsList, NftAssetsEdit, NftAssetsCreate } from './resources/nftAssets';
 import { OrdersList, OrdersEdit, OrdersCreate } from './resources/orders';
-import { AdminLogsList, AdminLogsEdit, AdminLogsCreate } from './resources/adminLogs';
+import { AdminLogsList, AdminLogsShow } from './resources/adminLogs';
 import { authProvider } from './authProvider';
 import httpClient from './httpClient';
 import { i18nProvider } from './i18nProvider';
@@ -32,7 +33,68 @@ import { MyLayout } from './layout/MyLayout';
 
 const API_URL = '/api';
 
-const dataProvider = simpleRestProvider(API_URL, httpClient);
+const baseDataProvider = simpleRestProvider(API_URL, httpClient);
+
+// Upload ảnh nếu field là File trước khi gọi create/update (Upload image if field is File before create/update)
+const uploadImageIfNeeded = async (data: any) => {
+  if (!data || !data.imageUrl || !(data.imageUrl instanceof File)) {
+    return data;
+  }
+
+  const file: File = data.imageUrl;
+
+  const token = localStorage.getItem('agriverse_token');
+  if (!token) {
+    throw new Error('Vui lòng đăng nhập lại (Please login again)');
+  }
+
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await fetch('http://localhost:4000/api/upload/image', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ message: 'Upload failed' }));
+    throw new Error(errorData.message || 'Upload failed');
+  }
+
+  const result = await response.json();
+  const url = result.url;
+
+  return {
+    ...data,
+    imageUrl: url,
+  };
+};
+
+const dataProvider = {
+  ...baseDataProvider,
+  create: async (resource: string, params: any) => {
+    let data = params.data;
+
+    // Chỉ xử lý upload cho farm-logs (Only handle upload for farm-logs)
+    if (resource === 'farm-logs') {
+      data = await uploadImageIfNeeded(data);
+    }
+
+    return baseDataProvider.create(resource, { ...params, data });
+  },
+  update: async (resource: string, params: any) => {
+    let data = params.data;
+
+    if (resource === 'farm-logs') {
+      data = await uploadImageIfNeeded(data);
+    }
+
+    return baseDataProvider.update(resource, { ...params, data });
+  },
+};
 
 const App = () => (
   <Admin
@@ -92,11 +154,11 @@ const App = () => (
       name="admin-logs"
       options={{ label: 'Log quản trị (Admin logs)' }}
       list={AdminLogsList}
-      edit={AdminLogsEdit}
-      create={AdminLogsCreate}
+      show={AdminLogsShow}
     />
     <CustomRoutes>
       <Route path="/" element={<Dashboard />} />
+      <Route path="/statistics" element={<StatisticsPage />} />
     </CustomRoutes>
   </Admin>
 );

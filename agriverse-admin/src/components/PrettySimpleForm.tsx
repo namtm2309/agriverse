@@ -7,52 +7,72 @@ import {
 } from 'react-admin';
 import { Children, isValidElement, ReactNode } from 'react';
 
-const PrettyToolbar = () => (
-  <Toolbar
-    sx={{
-      mt: 2,
-      px: { xs: 3, md: 4 },
-      pb: { xs: 2.5, md: 3 },
-      backgroundColor: '#ffffff',
-      '& .RaToolbar-defaultToolbar': { width: '100%' },
-    }}
-  >
-    <SaveButton
-      variant="contained"
+const PrettyToolbar = () => {
+  return (
+    <Toolbar
       sx={{
-        width: '100%',
-        height: 48,
-        borderRadius: 3,
-        fontWeight: 900,
-        letterSpacing: 0.6,
-        boxShadow: '0 18px 45px rgba(37,99,235,0.20)',
-        backgroundImage:
-          'linear-gradient(90deg, rgba(37,99,235,1) 0%, rgba(6,182,212,1) 100%)',
-        '&:hover': {
-          boxShadow: '0 22px 55px rgba(37,99,235,0.26)',
-          backgroundImage:
-            'linear-gradient(90deg, rgba(29,78,216,1) 0%, rgba(8,145,178,1) 100%)',
-        },
-        '&.Mui-disabled': {
-          backgroundImage: 'none',
-          backgroundColor: 'rgba(15,23,42,0.12)',
-          color: 'rgba(15,23,42,0.35)',
-          boxShadow: 'none',
-        },
+        mt: 2,
+        px: { xs: 3, md: 4 },
+        pb: { xs: 2.5, md: 3 },
+        backgroundColor: '#ffffff',
+        '& .RaToolbar-defaultToolbar': { width: '100%' },
       }}
-    />
-  </Toolbar>
-);
+    >
+      <SaveButton
+        variant="contained"
+        sx={{
+          width: '100%',
+          height: 48,
+          borderRadius: 3,
+          fontWeight: 900,
+          letterSpacing: 0.6,
+          boxShadow: '0 18px 45px rgba(37,99,235,0.20)',
+          backgroundImage:
+            'linear-gradient(90deg, rgba(37,99,235,1) 0%, rgba(6,182,212,1) 100%)',
+          '&:hover': {
+            boxShadow: '0 22px 55px rgba(37,99,235,0.26)',
+            backgroundImage:
+              'linear-gradient(90deg, rgba(29,78,216,1) 0%, rgba(8,145,178,1) 100%)',
+          },
+          '&.Mui-disabled': {
+            backgroundImage: 'none',
+            backgroundColor: 'rgba(15,23,42,0.12)',
+            color: 'rgba(15,23,42,0.35)',
+            boxShadow: 'none',
+          },
+        }}
+      />
+    </Toolbar>
+  );
+};
 
-export const PrettySimpleForm = ({ children, ...rest }: SimpleFormProps) => {
+export const PrettySimpleForm = ({ children, transform: customTransform, onSuccess, ...rest }: SimpleFormProps) => {
   const items: ReactNode[] = [];
   Children.forEach(children, (child) => {
     if (isValidElement(child)) items.push(child);
   });
 
+  // Transform: chỉ gọi transform tuỳ chỉnh nếu có (không xử lý upload ở đây nữa)
+  const handleTransform = async (data: any) => {
+    if (customTransform) {
+      return customTransform(data);
+    }
+    return data;
+  };
+
+  // onSuccess: chỉ forward cho onSuccess tuỳ chỉnh nếu có
+  const handleSuccess = async (data: any) => {
+    if (onSuccess) {
+      return onSuccess(data);
+    }
+    return data;
+  };
+
   return (
     <SimpleForm
       {...rest}
+      transform={handleTransform}
+      onSuccess={handleSuccess}
       toolbar={<PrettyToolbar />}
       sx={{
         p: 0,
@@ -108,6 +128,26 @@ export const PrettySimpleForm = ({ children, ...rest }: SimpleFormProps) => {
           marginRight: 0,
           color: 'text.secondary',
         },
+        // Style cho button trong form để đồng nhất với input (Button styles to match inputs)
+        '& .MuiButton-root.MuiButton-outlined': {
+          minHeight: 48,
+          borderRadius: 2,
+          backgroundColor: 'rgba(248,250,252,1)',
+          borderColor: 'rgba(148,163,184,0.55)',
+          color: 'text.primary',
+          textTransform: 'none',
+          fontWeight: 500,
+          transition: 'all 150ms ease',
+          '&:hover': {
+            backgroundColor: 'rgba(241,245,249,1)',
+            borderColor: 'rgba(100,116,139,0.65)',
+          },
+          '&:focus': {
+            borderColor: 'rgba(37,99,235,0.9)',
+            boxShadow: '0 0 0 4px rgba(37,99,235,0.12)',
+            backgroundColor: '#ffffff',
+          },
+        },
       }}
     >
       <Box
@@ -115,20 +155,18 @@ export const PrettySimpleForm = ({ children, ...rest }: SimpleFormProps) => {
           px: { xs: 3, md: 4 },
           pt: { xs: 0.25, md: 0.25 },
           pb: { xs: 0.5, md: 0.5 },
-          width: '100%',
-          maxWidth: '100%',
+          width: 'fit-content',
+          minWidth: 'fit-content',
           boxSizing: 'border-box',
         }}
       >
         <Box
           sx={{
-            display: 'grid',
-            width: '100%',
-            maxWidth: '100%',
-            gridTemplateColumns: { xs: '1fr', md: 'minmax(0, 1fr) minmax(0, 1fr)' },
-            gap: { xs: 2, md: 2.25 },
-            alignItems: 'start',
-            '& .span-2': { gridColumn: '1 / -1' },
+            display: 'flex',
+            flexDirection: 'column',
+            width: '400px',
+            gap: 2.25,
+            alignItems: 'stretch',
           }}
         >
           {items.map((child, idx) => (

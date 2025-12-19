@@ -48,7 +48,7 @@ export const NftAssetsEdit = () => (
         <SelectInput optionText="username" />
       </ReferenceInput>
       <TextInput source="benefitDescription" multiline />
-      <NumberInput source="expectedYield" />
+      <NumberInput source="expectedYield" helperText="Đơn vị: kg (Unit: kilograms)" />
       <TextInput source="status" />
     </PrettySimpleForm>
   </EditDialog>
@@ -71,7 +71,7 @@ export const NftAssetsCreate = () => (
         <SelectInput optionText="username" />
       </ReferenceInput>
       <TextInput source="benefitDescription" multiline />
-      <NumberInput source="expectedYield" />
+      <NumberInput source="expectedYield" helperText="Đơn vị: kg (Unit: kilograms)" />
       <TextInput source="status" />
     </PrettySimpleForm>
   </CreateDialog>

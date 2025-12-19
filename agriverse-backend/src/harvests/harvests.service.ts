@@ -1,9 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { WebhooksService } from '../webhooks/webhooks.service';
 
 @Injectable()
 export class HarvestsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly webhooksService: WebhooksService,
+  ) {}
 
   findAll() {
     return this.prisma.harvest.findMany({
@@ -18,13 +22,18 @@ export class HarvestsService {
     });
   }
 
-  create(data: {
+  async create(data: {
     seasonId: number;
     harvestDate?: Date;
     actualYield?: number;
     qualityNote?: string;
   }) {
-    return this.prisma.harvest.create({ data });
+    const harvest = await this.prisma.harvest.create({ data });
+    // Gửi webhook event
+    this.webhooksService.sendHarvestCreated(harvest.id).catch((err) => {
+      console.error('Failed to send webhook for harvest.created:', err);
+    });
+    return harvest;
   }
 
   update(

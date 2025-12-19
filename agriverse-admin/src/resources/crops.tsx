@@ -31,11 +31,11 @@ export const CropsEdit = () => (
     <PrettySimpleForm>
       <TextInput source="name" />
       <TextInput source="variety" />
-      <NumberInput source="growthDays" />
-      <NumberInput source="tempMin" />
-      <NumberInput source="tempMax" />
-      <NumberInput source="humidityMin" />
-      <NumberInput source="humidityMax" />
+      <NumberInput source="growthDays" helperText="Đơn vị: ngày (Unit: days)" />
+      <NumberInput source="tempMin" helperText="Đơn vị: °C (Unit: Celsius)" />
+      <NumberInput source="tempMax" helperText="Đơn vị: °C (Unit: Celsius)" />
+      <NumberInput source="humidityMin" helperText="Đơn vị: % (Unit: percentage)" />
+      <NumberInput source="humidityMax" helperText="Đơn vị: % (Unit: percentage)" />
     </PrettySimpleForm>
   </EditDialog>
 );
@@ -45,11 +45,11 @@ export const CropsCreate = () => (
     <PrettySimpleForm>
       <TextInput source="name" />
       <TextInput source="variety" />
-      <NumberInput source="growthDays" />
-      <NumberInput source="tempMin" />
-      <NumberInput source="tempMax" />
-      <NumberInput source="humidityMin" />
-      <NumberInput source="humidityMax" />
+      <NumberInput source="growthDays" helperText="Đơn vị: ngày (Unit: days)" />
+      <NumberInput source="tempMin" helperText="Đơn vị: °C (Unit: Celsius)" />
+      <NumberInput source="tempMax" helperText="Đơn vị: °C (Unit: Celsius)" />
+      <NumberInput source="humidityMin" helperText="Đơn vị: % (Unit: percentage)" />
+      <NumberInput source="humidityMax" helperText="Đơn vị: % (Unit: percentage)" />
     </PrettySimpleForm>
   </CreateDialog>
 );

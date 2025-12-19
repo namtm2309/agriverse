@@ -12,6 +12,8 @@ import {
 } from 'react-admin';
 import { PrettySimpleForm } from '../components/PrettySimpleForm';
 import { CreateDialog, EditDialog } from '../components/RaDialogViews';
+import { ImageUploadInput } from '../components/ImageUploadInput';
+import { CustomImageField } from '../components/CustomImageField';
 
 export const FarmLogsList = () => (
   <List>
@@ -20,7 +22,7 @@ export const FarmLogsList = () => (
       <ReferenceField source="seasonId" reference="seasons" />
       <ReferenceField source="taskId" reference="tasks" />
       <TextField source="note" />
-      <TextField source="imageUrl" />
+      <CustomImageField source="imageUrl" label="Ảnh (Image)" />
       <DateField source="createdAt" />
       <EditButton />
       <DeleteButton />
@@ -38,7 +40,7 @@ export const FarmLogsEdit = () => (
         <SelectInput optionText="title" />
       </ReferenceInput>
       <TextInput source="note" multiline />
-      <TextInput source="imageUrl" />
+      <ImageUploadInput source="imageUrl" label="Ảnh (Image)" />
     </PrettySimpleForm>
   </EditDialog>
 );
@@ -53,7 +55,7 @@ export const FarmLogsCreate = () => (
         <SelectInput optionText="title" />
       </ReferenceInput>
       <TextInput source="note" multiline />
-      <TextInput source="imageUrl" />
+      <ImageUploadInput source="imageUrl" label="Ảnh (Image)" />
     </PrettySimpleForm>
   </CreateDialog>
 );

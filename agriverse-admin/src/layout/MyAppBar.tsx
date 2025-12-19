@@ -2,6 +2,7 @@ import { AppBar } from 'react-admin';
 import { Box, InputBase, alpha } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { ViEnText } from '../components/ViEnText';
+import { NotificationsBell } from '../components/NotificationsBell';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -97,35 +98,38 @@ const MyAppBarInner = (props: any) => {
 
       <Box sx={{ flex: 1 }} />
 
-      <Box
-        sx={{
-          display: { xs: 'none', md: 'flex' },
-          alignItems: 'center',
-          gap: 1,
-          px: 1.5,
-          py: 0.75,
-          borderRadius: 999,
-          border: '1px solid rgba(15,23,42,0.10)',
-          backgroundColor: alpha('#0f172a', 0.02),
-        }}
-      >
-        <SearchIcon fontSize="small" />
-        <InputBase
-          placeholder="Tìm nhanh… (Quick search)"
-          value={value}
-          onChange={(e) => {
-            const next = e.target.value;
-            setValue(next);
-            debouncedNavigate(next);
-          }}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Box
           sx={{
-            width: 260,
-            fontSize: 14,
-            '& input': { color: 'text.primary' },
-            '& input::placeholder': { color: 'text.secondary', opacity: 0.9 },
+            display: { xs: 'none', md: 'flex' },
+            alignItems: 'center',
+            gap: 1,
+            px: 1.5,
+            py: 0.75,
+            borderRadius: 999,
+            border: '1px solid rgba(15,23,42,0.10)',
+            backgroundColor: alpha('#0f172a', 0.02),
           }}
-          inputProps={{ 'aria-label': 'quick search' }}
-        />
+        >
+          <SearchIcon fontSize="small" />
+          <InputBase
+            placeholder="Tìm nhanh… (Quick search)"
+            value={value}
+            onChange={(e) => {
+              const next = e.target.value;
+              setValue(next);
+              debouncedNavigate(next);
+            }}
+            sx={{
+              width: 260,
+              fontSize: 14,
+              '& input': { color: 'text.primary' },
+              '& input::placeholder': { color: 'text.secondary', opacity: 0.9 },
+            }}
+            inputProps={{ 'aria-label': 'quick search' }}
+          />
+        </Box>
+        <NotificationsBell />
       </Box>
     </AppBar>
   );

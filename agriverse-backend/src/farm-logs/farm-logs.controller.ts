@@ -11,15 +11,25 @@ import {
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { IsString, IsNumber, IsOptional } from 'class-validator';
 import { FarmLogsService } from './farm-logs.service';
 import { setContentRange } from '../common/list-with-range.util';
 import { parseRaListQuery } from '../common/ra/ra-list-query.util';
 import { applyRaListQuery } from '../common/ra/apply-ra-list.util';
 
 class CreateFarmLogDto {
+  @IsNumber()
   seasonId!: number;
+
+  @IsOptional()
+  @IsNumber()
   taskId?: number;
+
+  @IsString()
   note!: string;
+
+  @IsOptional()
+  @IsString()
   imageUrl?: string;
 }
 
@@ -45,7 +55,12 @@ export class FarmLogsController {
 
   @Post()
   create(@Body() body: CreateFarmLogDto) {
-    return this.farmLogsService.create(body);
+    // Đảm bảo note luôn có giá trị (Ensure note always has a value)
+    const data = {
+      ...body,
+      note: body.note || '',
+    };
+    return this.farmLogsService.create(data);
   }
 
   @Put(':id')
@@ -53,7 +68,9 @@ export class FarmLogsController {
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateFarmLogDto,
   ) {
-    return this.farmLogsService.update(id, body);
+    // Đảm bảo note luôn có giá trị nếu được cung cấp (Ensure note has value if provided)
+    const data = body.note !== undefined ? { ...body, note: body.note || '' } : body;
+    return this.farmLogsService.update(id, data);
   }
 
   @Delete(':id')

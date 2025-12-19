@@ -3,57 +3,36 @@ import {
   Datagrid,
   TextField,
   DateField,
-  TextInput,
-  NumberInput,
   NumberField,
   ReferenceField,
-  ReferenceInput,
-  SelectInput,
-  EditButton,
-  DeleteButton,
+  Show,
+  SimpleShowLayout,
 } from 'react-admin';
-import { PrettySimpleForm } from '../components/PrettySimpleForm';
-import { CreateDialog, EditDialog } from '../components/RaDialogViews';
 
 export const AdminLogsList = () => (
   <List>
-    <Datagrid rowClick="edit">
+    <Datagrid rowClick="show">
       <TextField source="id" />
-      <ReferenceField source="adminId" reference="users" />
-      <TextField source="action" />
-      <TextField source="targetType" />
-      <NumberField source="targetId" />
-      <DateField source="createdAt" />
-      <EditButton />
-      <DeleteButton />
+      <ReferenceField source="adminId" reference="users" label="Admin" />
+      <TextField source="action" label="Hành động (Action)" />
+      <TextField source="targetType" label="Loại (Type)" />
+      <NumberField source="targetId" label="ID đối tượng (Target ID)" />
+      <DateField source="createdAt" label="Thời gian (Time)" showTime />
     </Datagrid>
   </List>
 );
 
-export const AdminLogsEdit = () => (
-  <EditDialog redirect="list">
-    <PrettySimpleForm>
-      <ReferenceInput source="adminId" reference="users">
-        <SelectInput optionText="username" />
-      </ReferenceInput>
-      <TextInput source="action" />
-      <TextInput source="targetType" />
-      <NumberInput source="targetId" />
-    </PrettySimpleForm>
-  </EditDialog>
-);
-
-export const AdminLogsCreate = () => (
-  <CreateDialog redirect="list">
-    <PrettySimpleForm>
-      <ReferenceInput source="adminId" reference="users">
-        <SelectInput optionText="username" />
-      </ReferenceInput>
-      <TextInput source="action" />
-      <TextInput source="targetType" />
-      <NumberInput source="targetId" />
-    </PrettySimpleForm>
-  </CreateDialog>
+export const AdminLogsShow = () => (
+  <Show>
+    <SimpleShowLayout>
+      <TextField source="id" />
+      <ReferenceField source="adminId" reference="users" label="Admin" />
+      <TextField source="action" label="Hành động (Action)" />
+      <TextField source="targetType" label="Loại (Type)" />
+      <NumberField source="targetId" label="ID đối tượng (Target ID)" />
+      <DateField source="createdAt" label="Thời gian (Time)" showTime />
+    </SimpleShowLayout>
+  </Show>
 );
 
 

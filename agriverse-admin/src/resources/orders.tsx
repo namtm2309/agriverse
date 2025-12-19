@@ -36,7 +36,7 @@ export const OrdersEdit = () => (
       <ReferenceInput source="buyerId" reference="users">
         <SelectInput optionText="username" />
       </ReferenceInput>
-      <NumberInput source="totalAmount" />
+      <NumberInput source="totalAmount" helperText="Đơn vị: VNĐ (Unit: VND)" />
       <TextInput source="paymentMethod" />
       <TextInput source="status" />
     </PrettySimpleForm>
@@ -49,7 +49,7 @@ export const OrdersCreate = () => (
       <ReferenceInput source="buyerId" reference="users">
         <SelectInput optionText="username" />
       </ReferenceInput>
-      <NumberInput source="totalAmount" />
+      <NumberInput source="totalAmount" helperText="Đơn vị: VNĐ (Unit: VND)" />
       <TextInput source="paymentMethod" />
       <TextInput source="status" />
     </PrettySimpleForm>

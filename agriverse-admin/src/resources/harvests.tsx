@@ -37,7 +37,7 @@ export const HarvestsEdit = () => (
         <SelectInput optionText="id" />
       </ReferenceInput>
       <DateInput source="harvestDate" />
-      <NumberInput source="actualYield" />
+      <NumberInput source="actualYield" helperText="Đơn vị: kg (Unit: kilograms)" />
       <TextInput source="qualityNote" multiline />
     </PrettySimpleForm>
   </EditDialog>
@@ -50,7 +50,7 @@ export const HarvestsCreate = () => (
         <SelectInput optionText="id" />
       </ReferenceInput>
       <DateInput source="harvestDate" />
-      <NumberInput source="actualYield" />
+      <NumberInput source="actualYield" helperText="Đơn vị: kg (Unit: kilograms)" />
       <TextInput source="qualityNote" multiline />
     </PrettySimpleForm>
   </CreateDialog>

@@ -52,7 +52,7 @@ export const SeasonsEdit = () => (
       </ReferenceInput>
       <DateInput source="startDate" />
       <DateInput source="expectedHarvestDate" />
-      <NumberInput source="expectedYield" />
+      <NumberInput source="expectedYield" helperText="Đơn vị: kg (Unit: kilograms)" />
       <SelectInput
         source="status"
         choices={SEASON_STATUS_CHOICES as any}
@@ -73,7 +73,7 @@ export const SeasonsCreate = () => (
       </ReferenceInput>
       <DateInput source="startDate" />
       <DateInput source="expectedHarvestDate" />
-      <NumberInput source="expectedYield" />
+      <NumberInput source="expectedYield" helperText="Đơn vị: kg (Unit: kilograms)" />
       <SelectInput
         source="status"
         choices={SEASON_STATUS_CHOICES as any}
